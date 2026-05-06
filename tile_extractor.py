@@ -196,34 +196,51 @@ def ccitt_to_png(data: bytes, w: int, h: int, k: int) -> bytes:
 
 
 def prepare_output(data, ext, flt, w, h, cs, bpc):
-    """JPEG/JP2 byte-copied. Everything else -> lossless PNG."""
-    if ext in ("jpg","jpeg") or "DCTDecode" in flt:
-        return data, "jpg"
-    if ext == "jp2" or "JPXDecode" in flt:
-        return data, "jp2"
-    if ext == "png":
-        return data, "png"
-    if "JBIG2" in flt or ext == "jbig2":
-        try:
-            buf = io.BytesIO()
-            Image.open(io.BytesIO(data)).save(buf, "PNG", optimize=False, compress_level=0)
-            return buf.getvalue(), "png"
-        except Exception as e:
-            return None, ""
-    if "CCITTFaxDecode" in flt or ext == "ccitt":
-        try:
-            return ccitt_to_png(data, w, h, -1 if "Group4" in flt else 0), "png"
-        except Exception:
-            return None, ""
+    """Converts EVERYTHING to a web-safe RGB JPEG or RGBA PNG."""
+    img = None
+    
+    # 1. Try standard Pillow open
     try:
-        return raw_to_png(data, w, h, cs), "png"
+        img = Image.open(io.BytesIO(data))
     except Exception:
+        pass
+        
+    # 2. Try CCITT Fax
+    if img is None and ("CCITTFaxDecode" in flt or ext == "ccitt"):
         try:
-            buf = io.BytesIO()
-            Image.open(io.BytesIO(data)).save(buf, "PNG", optimize=False, compress_level=0)
-            return buf.getvalue(), "png"
+            png_bytes = ccitt_to_png(data, w, h, -1 if "Group4" in flt else 0)
+            img = Image.open(io.BytesIO(png_bytes))
         except Exception:
-            return data, ext or "bin"
+            pass
+            
+    # 3. Try Raw Bytes
+    if img is None:
+        try:
+            png_bytes = raw_to_png(data, w, h, cs)
+            img = Image.open(io.BytesIO(png_bytes))
+        except Exception:
+            pass
+            
+    if img is None:
+        return None, ""
+        
+    # 4. Guarantee Web Safe Format
+    try:
+        has_alpha = img.mode in ("RGBA", "LA", "PA") or "transparency" in img.info
+        target_mode = "RGBA" if has_alpha else "RGB"
+        
+        if img.mode != target_mode:
+            img = img.convert(target_mode)
+            
+        buf = io.BytesIO()
+        if target_mode == "RGBA" or ext == "png":
+            img.save(buf, format="PNG", optimize=False, compress_level=1)
+            return buf.getvalue(), "png"
+        else:
+            img.save(buf, format="JPEG", quality=92)
+            return buf.getvalue(), "jpg"
+    except Exception:
+        return None, ""
 
 
 # ── Extractor ──────────────────────────────────────────────────────────────
