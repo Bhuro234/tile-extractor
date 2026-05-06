@@ -72,7 +72,7 @@ async def get_results(job_id: str):
     meta_path = job_dir / "output" / "pages_metadata.json"
 
     if not csv_path.exists():
-        return {"pages": []}
+        return JSONResponse(status_code=404, content={"error": "Results not ready yet. Still writing files..."})
 
     # Load images from CSV
     images_by_page = {}

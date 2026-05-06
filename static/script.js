@@ -147,9 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error(`Fetch attempt ${attempt + 1} failed:`, error);
             if (attempt < MAX_ATTEMPTS) {
-                setTimeout(() => fetchResults(jobId, attempt + 1), 1000);
+                // Exponential backoff or just wait longer
+                const delay = attempt < 10 ? 1000 : 2000;
+                setTimeout(() => fetchResults(jobId, attempt + 1), delay);
             } else {
-                alert('Could not load results. Please try refreshing the page.');
+                alert(`Error loading results: ${error.message}\nThis usually happens if the catalogue is very large. Try refreshing the page once the processing hit 100%.`);
                 loadingSection.classList.add('hidden');
                 uploadSection.classList.remove('hidden');
             }
