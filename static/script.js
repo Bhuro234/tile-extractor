@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchResults(jobId, attempt = 0) {
-        const MAX_ATTEMPTS = 10;
+        const MAX_ATTEMPTS = 30;
         try {
             const res = await fetch(`/api/results/${jobId}`);
             if (!res.ok) throw new Error(`Server error: ${res.status}`);

@@ -69,7 +69,7 @@ class PageMetadataExtractor:
             return
         try:
             page = doc[pno]
-            mat = fitz.Matrix(3, 3)
+            mat = fitz.Matrix(2, 2)
             pix = page.get_pixmap(matrix=mat)
             img = Image.open(io.BytesIO(pix.tobytes("png")))
             
@@ -84,9 +84,9 @@ class PageMetadataExtractor:
                     words.append({
                         'text': txt,
                         'bbox': [
-                            data['left'][i]/3.0, data['top'][i]/3.0,
-                            (data['left'][i] + data['width'][i])/3.0,
-                            (data['top'][i] + data['height'][i])/3.0
+                            data['left'][i]/2.0, data['top'][i]/2.0,
+                            (data['left'][i] + data['width'][i])/2.0,
+                            (data['top'][i] + data['height'][i])/2.0
                         ]
                     })
             self._current_page_data = words
