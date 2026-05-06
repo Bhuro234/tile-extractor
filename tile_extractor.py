@@ -295,16 +295,22 @@ class TileCatalogueExtractor:
                 tasks.append((pno, info))
 
         self.stats["raw_found"] = len(tasks)
-        # 1. Extract Page-Wise Metadata
+        # 1. Extract Page-Wise Metadata (0% - 50%)
         print("  Extracting page-wise specifications...")
-        for pno in plist:
+        for i, pno in enumerate(plist):
             self._page_meta[pno] = self.meta_extractor.extract_page_meta(doc, pno)
+            if progress_callback:
+                # First 50% of progress is metadata
+                progress_callback(int((i + 1) / len(plist) * 50), 100)
 
-        # 2. Extract Images
+        # 2. Extract Images (50% - 100%)
         it = tqdm(tasks) if HAS_TQDM else tasks
         for i, (pno, info) in enumerate(it):
             self._process_spatial(doc, pno, info)
-            if progress_callback: progress_callback(i + 1, len(tasks))
+            if progress_callback:
+                # Second 50% of progress is images
+                current_prog = 50 + int((i + 1) / len(tasks) * 50)
+                progress_callback(current_prog, 100)
 
         doc.close()
         self._write_page_metadata()

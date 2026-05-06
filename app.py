@@ -26,10 +26,9 @@ def run_extraction_task(job_id: str, pdf_path: str, output_dir: str):
             verbose=False
         )
         def progress_cb(current, total):
-            PROGRESS_STATE[job_id]["current"] = current
+            # 'current' is now the actual percentage (0-100)
+            PROGRESS_STATE[job_id]["percentage"] = current
             PROGRESS_STATE[job_id]["total"] = total
-            if total > 0:
-                PROGRESS_STATE[job_id]["percentage"] = int((current / total) * 100)
                 
         extractor.extract(progress_callback=progress_cb)
         PROGRESS_STATE[job_id]["status"] = "completed"
