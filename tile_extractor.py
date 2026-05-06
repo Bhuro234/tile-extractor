@@ -35,10 +35,20 @@ except ImportError:
 
 try:
     import pytesseract
-    import platform
-    if platform.system() == "Windows":
-        pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    # Tesseract Path Configuration
+    TESS_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    if os.path.exists(TESS_PATH):
+        pytesseract.pytesseract.tesseract_cmd = TESS_PATH
+    else:
+        # Assume it's in PATH (Linux/Render)
+        pytesseract.pytesseract.tesseract_cmd = 'tesseract'
+
     HAS_OCR = True
+    try:
+        pytesseract.get_tesseract_version()
+    except Exception:
+        print("WARNING: Tesseract not found in PATH or standard location.")
+        HAS_OCR = False
 except ImportError:
     HAS_OCR = False
 
@@ -112,7 +122,13 @@ class PageMetadataExtractor:
             m_s = self.SIZE_RE.search(clean)
             if m_s:
                 w, h, u = m_s.group(1), m_s.group(2).replace('I','1').replace('l','1'), (m_s.group(3) or 'mm')
-                current_product["size"] = f"{w}x{h}{u}"
+                # If current product already has a size, it might be a new product in the same group
+                if current_product["size"]:
+                    products.append(current_product.copy())
+                    # Keep name and surface for the next size in the group
+                    current_product["size"] = f"{w}x{h}{u}"
+                else:
+                    current_product["size"] = f"{w}x{h}{u}"
                 continue
 
             # 2. Surface
@@ -123,22 +139,25 @@ class PageMetadataExtractor:
                     found_sf = sf.title()
                     break
             if found_sf:
-                current_product["surface"] = found_sf
+                if current_product["surface"]:
+                    products.append(current_product.copy())
+                    current_product["surface"] = found_sf
+                else:
+                    current_product["surface"] = found_sf
                 continue
 
-            # 3. Look for Name (Product Title)
-            # Remove common prefixes
+            # 3. Name (Product Title)
             temp_clean = clean
-            for prefix in ["Wall & Floor:", "Wall:", "Floor:", "Wall & Floor :"]:
+            for prefix in ["Wall & Floor:", "Wall:", "Floor:", "Wall & Floor :", "Product:"]:
                 if temp_clean.lower().startswith(prefix.lower()):
                     temp_clean = temp_clean[len(prefix):].strip()
                     break
             
-            # Check if the remaining part is mostly uppercase (product names are always all caps)
             upper_only = "".join(c for c in temp_clean if c.isupper())
-            if len(temp_clean) > 5 and len(upper_only) / len(temp_clean) > 0.7:
+            # Relaxed check: at least 4 uppercase chars and > 50% uppercase
+            if len(temp_clean) > 4 and len(upper_only) >= 4 and len(upper_only) / len(temp_clean) > 0.5:
                 if current_product["name"]:
-                    products.append(current_product)
+                    products.append(current_product.copy())
                     current_product = {"name": "", "size": "", "surface": ""}
                 current_product["name"] = temp_clean.title()
 
