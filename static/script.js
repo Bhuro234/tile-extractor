@@ -125,8 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Start timer once we know the total pages
                 if (data.total && !timerStarted) {
                     timerStarted = true;
-                    // Estimate: 10s per page on average * 1.5 safety factor
-                    secondsLeft = Math.ceil(data.total * 10 * 1.5);
+                    // Check if OCR is actually working on the server
+                    if (data.ocr_enabled === false) {
+                        console.warn("OCR engine is not detected on the server.");
+                        document.getElementById('loading-status').textContent = "OCR Engine Offline - Names/Sizes will be missing";
+                    }
+
+                    // Estimate: 5s per page on average * 1.5 safety factor
+                    secondsLeft = Math.ceil(data.total * 5 * 1.5);
                     
                     timerInterval = setInterval(() => {
                         if (secondsLeft > 0) {

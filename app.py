@@ -63,7 +63,11 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
 async def get_progress(job_id: str):
     if job_id not in PROGRESS_STATE:
         return {"status": "unknown"}
-    return PROGRESS_STATE[job_id]
+    
+    from tile_extractor import HAS_OCR
+    state = PROGRESS_STATE[job_id].copy()
+    state["ocr_enabled"] = HAS_OCR
+    return state
 
 @app.get("/api/results/{job_id}")
 async def get_results(job_id: str):
@@ -89,13 +93,17 @@ async def get_results(job_id: str):
             page_meta = json.load(f)
 
     # Build page-grouped response
+    # Get all page numbers that have data (images or meta)
+    all_pnos = set(images_by_page.keys()) | set(page_meta.keys())
+    
     pages = []
-    for pno in sorted(images_by_page.keys(), key=lambda x: int(x)):
+    for pno in sorted(all_pnos, key=lambda x: int(x)):
         meta = page_meta.get(str(pno), {})
+        images = images_by_page.get(str(pno), [])
         pages.append({
             "page": int(pno),
             "metadata": meta,
-            "images": images_by_page[pno]
+            "images": images
         })
 
     return {"pages": pages}
