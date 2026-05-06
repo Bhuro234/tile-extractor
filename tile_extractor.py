@@ -281,7 +281,7 @@ class TileCatalogueExtractor:
         self._csv_rows = []
         self._page_meta = {}
 
-    def extract(self, pages=None, progress_callback=None):
+    def extract_images(self, pages=None, progress_callback=None):
         doc = fitz.open(self.pdf_path)
         total = len(doc)
         self.stats["pages"] = total
@@ -290,32 +290,35 @@ class TileCatalogueExtractor:
         tasks = []
         for pno in plist:
             page = doc[pno]
-            self.meta_extractor.prepare_page(doc, pno)
             for info in page.get_image_info():
                 tasks.append((pno, info))
 
         self.stats["raw_found"] = len(tasks)
-        # 1. Extract Page-Wise Metadata (0% - 50%)
-        print("  Extracting page-wise specifications...")
-        for i, pno in enumerate(plist):
-            self._page_meta[pno] = self.meta_extractor.extract_page_meta(doc, pno)
-            if progress_callback:
-                # First 50% of progress is metadata
-                progress_callback(int((i + 1) / len(plist) * 50), 100)
-
-        # 2. Extract Images (50% - 100%)
+        print("  Extracting images...")
+        
         it = tqdm(tasks) if HAS_TQDM else tasks
         for i, (pno, info) in enumerate(it):
             self._process_spatial(doc, pno, info)
             if progress_callback:
-                # Second 50% of progress is images
-                current_prog = 50 + int((i + 1) / len(tasks) * 50)
-                progress_callback(current_prog, 100)
+                progress_callback(int((i + 1) / len(tasks) * 100), 100)
+
+        doc.close()
+        self._write_csv()
+        self._summary()
+
+    def scan_metadata(self, pages=None, progress_callback=None):
+        doc = fitz.open(self.pdf_path)
+        total = len(doc)
+        plist = pages if pages is not None else list(range(total))
+
+        print("  Scanning page-wise specifications...")
+        for i, pno in enumerate(plist):
+            self._page_meta[pno] = self.meta_extractor.extract_page_meta(doc, pno)
+            if progress_callback:
+                progress_callback(int((i + 1) / len(plist) * 100), 100)
 
         doc.close()
         self._write_page_metadata()
-        self._write_csv()
-        self._summary()
 
     def _write_page_metadata(self):
         meta_path = self.output_dir / "pages_metadata.json"

@@ -147,10 +147,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.status === 'completed') {
                     clearInterval(interval);
                     if(timerInterval) clearInterval(timerInterval);
-                    timerText.textContent = "Finalizing...";
+                    timerText.textContent = "Finalizing Images...";
                     progressFill.style.width = '100%';
                     progressText.textContent = '100%';
-                    document.getElementById('loading-status').textContent = 'Loading Results...';
+                    document.getElementById('loading-status').textContent = 'Loading Image Results...';
+                    setTimeout(() => {
+                        fetchResults(jobId);
+                    }, 600);
+                }
+
+                if (data.status === 'scan_completed') {
+                    clearInterval(interval);
+                    if(timerInterval) clearInterval(timerInterval);
+                    timerText.textContent = "Finalizing Metadata...";
+                    progressFill.style.width = '100%';
+                    progressText.textContent = '100%';
+                    document.getElementById('loading-status').textContent = 'Loading Scan Results...';
                     setTimeout(() => {
                         fetchResults(jobId);
                     }, 600);
@@ -188,6 +200,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function triggerScanData(jobId) {
+        try {
+            resultsSection.classList.add('hidden');
+            loadingSection.classList.remove('hidden');
+            
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const loadingStatus = document.getElementById('loading-status');
+            
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
+            loadingStatus.textContent = 'Scanning Metadata...';
+            document.getElementById('timer-text').textContent = 'calculating...';
+
+            const res = await fetch(`/api/scan/${jobId}`, { method: 'POST' });
+            if (!res.ok) throw new Error('Failed to start scanning');
+            
+            pollProgress(jobId);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to start metadata scan.');
+            loadingSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+        }
+    }
+
     // Rendering — page-grouped layout with metadata cards
     function renderGallery(pages, jobId) {
         gallery.innerHTML = '';
@@ -207,6 +245,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (downloadAllBtn) {
             downloadAllBtn.href = `/api/download/${jobId}`;
             downloadAllBtn.style.display = 'inline-flex';
+        }
+
+        const scanDataBtn = document.getElementById('scan-data-btn');
+        let hasScannedData = false;
+        
+        // Check if any page has metadata
+        pages.forEach(pageData => {
+            if (pageData.metadata && pageData.metadata.products && pageData.metadata.products.length > 0) {
+                hasScannedData = true;
+            }
+        });
+
+        if (scanDataBtn) {
+            if (hasScannedData) {
+                scanDataBtn.style.display = 'none'; // Hide if already scanned
+            } else {
+                scanDataBtn.style.display = 'inline-flex';
+                // Remove old listeners to prevent duplicates
+                const newScanBtn = scanDataBtn.cloneNode(true);
+                scanDataBtn.parentNode.replaceChild(newScanBtn, scanDataBtn);
+                
+                newScanBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await triggerScanData(jobId);
+                });
+            }
         }
 
         let imgIndex = 0;
@@ -265,24 +329,27 @@ document.addEventListener('DOMContentLoaded', () => {
             
             imagesCard.appendChild(grid);
 
-            // --- Portion 2: Data Card ---
-            const dataCard = document.createElement('div');
-            dataCard.className = 'portion-card data-portion';
-            dataCard.innerHTML = `<div class="portion-title">Specifications</div>`;
+            imagesCard.appendChild(grid);
+            splitContainer.appendChild(imagesCard);
 
-            const table = document.createElement('div');
-            table.className = 'data-table';
-            
-            // Header
-            table.innerHTML = `
-                <div class="table-row table-header">
-                    <div class="col-name">Name</div>
-                    <div class="col-size">Size</div>
-                    <div class="col-surface">Surface</div>
-                </div>
-            `;
+            // --- Portion 2: Data Card --- (ONLY if metadata exists)
+            if (metadata && metadata.products && metadata.products.length > 0) {
+                const dataCard = document.createElement('div');
+                dataCard.className = 'portion-card data-portion';
+                dataCard.innerHTML = `<div class="portion-title">Specifications</div>`;
 
-            if (metadata && metadata.products) {
+                const table = document.createElement('div');
+                table.className = 'data-table';
+                
+                // Header
+                table.innerHTML = `
+                    <div class="table-row table-header">
+                        <div class="col-name">Name</div>
+                        <div class="col-size">Size</div>
+                        <div class="col-surface">Surface</div>
+                    </div>
+                `;
+
                 metadata.products.forEach(prod => {
                     const row = document.createElement('div');
                     row.className = 'table-row';
@@ -293,13 +360,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     table.appendChild(row);
                 });
+
+                dataCard.appendChild(table);
+                splitContainer.appendChild(dataCard);
+            } else {
+                // Expand images portion to take full width if no data card
+                imagesCard.style.flex = "1";
+                imagesCard.style.minWidth = "100%";
             }
 
-            dataCard.appendChild(table);
-
-            // Add portions to split container
-            splitContainer.appendChild(imagesCard);
-            splitContainer.appendChild(dataCard);
             group.appendChild(splitContainer);
             
             gallery.appendChild(group);

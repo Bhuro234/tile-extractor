@@ -26,12 +26,30 @@ def run_extraction_task(job_id: str, pdf_path: str, output_dir: str):
             verbose=False
         )
         def progress_cb(current, total):
-            # 'current' is now the actual percentage (0-100)
             PROGRESS_STATE[job_id]["percentage"] = current
             PROGRESS_STATE[job_id]["total"] = total
                 
-        extractor.extract(progress_callback=progress_cb)
+        extractor.extract_images(progress_callback=progress_cb)
         PROGRESS_STATE[job_id]["status"] = "completed"
+        PROGRESS_STATE[job_id]["percentage"] = 100
+    except Exception as e:
+        PROGRESS_STATE[job_id]["status"] = "error"
+        PROGRESS_STATE[job_id]["error"] = str(e)
+
+def run_scan_task(job_id: str, pdf_path: str, output_dir: str):
+    PROGRESS_STATE[job_id] = {"status": "scanning", "current": 0, "total": 0, "percentage": 0}
+    try:
+        extractor = TileCatalogueExtractor(
+            pdf_path=pdf_path,
+            output_dir=output_dir,
+            verbose=False
+        )
+        def progress_cb(current, total):
+            PROGRESS_STATE[job_id]["percentage"] = current
+            PROGRESS_STATE[job_id]["total"] = total
+                
+        extractor.scan_metadata(progress_callback=progress_cb)
+        PROGRESS_STATE[job_id]["status"] = "scan_completed"
         PROGRESS_STATE[job_id]["percentage"] = 100
     except Exception as e:
         PROGRESS_STATE[job_id]["status"] = "error"
@@ -53,10 +71,27 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     output_dir = job_dir / "output"
     output_dir.mkdir(exist_ok=True)
     
-    # Run extractor in background
     background_tasks.add_task(run_extraction_task, job_id, str(pdf_path), str(output_dir))
         
     return {"job_id": job_id, "message": "Extraction started."}
+
+@app.post("/api/scan/{job_id}")
+async def scan_data(job_id: str, background_tasks: BackgroundTasks):
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        raise HTTPException(status_code=404, detail="Job not found")
+        
+    pdf_files = list(job_dir.glob("*.pdf"))
+    if not pdf_files:
+        raise HTTPException(status_code=404, detail="PDF not found for job")
+        
+    pdf_path = pdf_files[0]
+    output_dir = job_dir / "output"
+    
+    background_tasks.add_task(run_scan_task, job_id, str(pdf_path), str(output_dir))
+    
+    return {"job_id": job_id, "message": "Scanning started."}
+
 
 @app.get("/api/progress/{job_id}")
 async def get_progress(job_id: str):
