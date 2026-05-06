@@ -82,7 +82,24 @@ class PageMetadataExtractor:
         if self._current_pno == pno:
             return
         
-        # Try OCR first if available
+        # 1. Try PyMuPDF native text extraction FIRST (Near-instant, works for digital PDFs)
+        try:
+            page = doc[pno]
+            raw_words = page.get_text("words") # x0, y0, x1, y1, word, block_no, line_no, word_no
+            if len(raw_words) > 10: # If we found a decent amount of text, skip OCR
+                words = []
+                for w in raw_words:
+                    words.append({
+                        'text': w[4],
+                        'bbox': [w[0], w[1], w[2], w[3]]
+                    })
+                self._current_page_data = words
+                self._current_pno = pno
+                return
+        except Exception as e:
+            print(f"Native extraction failed: {e}")
+
+        # 2. Try OCR only if Native failed (For scanned/image-only PDFs)
         if HAS_OCR:
             try:
                 page = doc[pno]
@@ -109,22 +126,8 @@ class PageMetadataExtractor:
             except Exception as e:
                 print(f"OCR failed for page {pno}: {e}")
 
-        # Fallback to PyMuPDF native text extraction (Works for digital PDFs)
-        try:
-            page = doc[pno]
-            raw_words = page.get_text("words") # x0, y0, x1, y1, word, block_no, line_no, word_no
-            words = []
-            for w in raw_words:
-                words.append({
-                    'text': w[4],
-                    'bbox': [w[0], w[1], w[2], w[3]]
-                })
-            self._current_page_data = words
-            self._current_pno = pno
-        except Exception as e:
-            print(f"Fallback text extraction failed: {e}")
-            self._current_page_data = []
-            self._current_pno = pno
+        self._current_page_data = []
+        self._current_pno = pno
 
     def extract_page_meta(self, doc, pno: int) -> dict:
         """Extract all unique Names, Sizes, and Surfaces from the entire page."""
