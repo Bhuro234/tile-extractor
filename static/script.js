@@ -97,7 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function pollProgress(jobId) {
         const progressFill = document.getElementById('progress-fill');
         const progressText = document.getElementById('progress-text');
+        const timerText = document.getElementById('timer-text');
         
+        let timerInterval = null;
+        let secondsLeft = 0;
+        let timerStarted = false;
+
         const interval = setInterval(async () => {
             try {
                 const res = await fetch(`/api/progress/${jobId}`);
@@ -105,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (data.status === 'error') {
                     clearInterval(interval);
+                    if(timerInterval) clearInterval(timerInterval);
                     alert('Error during extraction: ' + data.error);
                     loadingSection.classList.add('hidden');
                     uploadSection.classList.remove('hidden');
@@ -115,9 +121,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     progressFill.style.width = `${data.percentage}%`;
                     progressText.textContent = `${data.percentage}%`;
                 }
+
+                // Start timer once we know the total pages
+                if (data.total && !timerStarted) {
+                    timerStarted = true;
+                    // Estimate: 10s per page on average * 1.5 safety factor
+                    secondsLeft = Math.ceil(data.total * 10 * 1.5);
+                    
+                    timerInterval = setInterval(() => {
+                        if (secondsLeft > 0) {
+                            secondsLeft--;
+                            const mins = Math.floor(secondsLeft / 60);
+                            const secs = secondsLeft % 60;
+                            timerText.textContent = `${mins}m ${secs}s`;
+                        }
+                    }, 1000);
+                }
                 
                 if (data.status === 'completed') {
                     clearInterval(interval);
+                    if(timerInterval) clearInterval(timerInterval);
+                    timerText.textContent = "Finalizing...";
                     progressFill.style.width = '100%';
                     progressText.textContent = '100%';
                     document.getElementById('loading-status').textContent = 'Loading Results...';

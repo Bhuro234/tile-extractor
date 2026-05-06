@@ -710,3 +710,17 @@ header p.subtitle {
         gap: 0.8rem;
     }
 }
+
+.timer-display {
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+#timer-text {
+    font-family: 'Outfit', sans-serif;
+    background: rgba(212, 175, 55, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
