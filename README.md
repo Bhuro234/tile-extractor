@@ -1,6 +1,6 @@
 # 🪨 Tile Image Extractor
 
-A premium, royal-classy web application to **automatically extract all tile product images** from PDF catalogues — losslessly, at high speed, with a beautiful UI.
+A web application to **automatically extract all tile product images** from PDF catalogues — losslessly, at high speed, unlimited times.
 
 Built by [Somya Bhalani](https://github.com/somyabhalani)
 
