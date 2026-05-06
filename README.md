@@ -36,6 +36,9 @@ pip install -r requirements.txt
 
 ### Run Locally
 
+> [!TIP]
+> **Highly Recommended:** For the best text metadata extraction (Name, Size, Surface), you should run this application locally. Scanned PDFs require Tesseract OCR, which runs much faster and more reliably on a local machine than on basic cloud hosting tiers.
+
 ```bash
 uvicorn app:app --reload
 ```
