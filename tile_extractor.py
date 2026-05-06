@@ -137,39 +137,30 @@ class PageMetadataExtractor:
         
         all_lines = self._get_lines_with_bbox(self._current_page_data)
         
-        products = []
-        current_product = {"name": "", "size": "", "surface": ""}
+        all_names = []
+        all_sizes = []
+        all_surfaces = []
         
         for text, _ in all_lines:
             clean = text.strip()
+            low = clean.lower()
             
             # 1. Size
             m_s = self.SIZE_RE.search(clean)
             if m_s:
                 w, h, u = m_s.group(1), m_s.group(2).replace('I','1').replace('l','1'), (m_s.group(3) or 'mm')
-                # If current product already has a size, it might be a new product in the same group
-                if current_product["size"]:
-                    products.append(current_product.copy())
-                    # Keep name and surface for the next size in the group
-                    current_product["size"] = f"{w}x{h}{u}"
-                else:
-                    current_product["size"] = f"{w}x{h}{u}"
+                size_str = f"{w}x{h}{u}"
+                if size_str not in all_sizes: all_sizes.append(size_str)
                 continue
 
             # 2. Surface
-            low = clean.lower()
             found_sf = None
             for sf in self.KNOWN_SURFACES:
                 if sf in low:
-                    found_sf = sf.title()
+                    surf = sf.title()
+                    if surf not in all_surfaces: all_surfaces.append(surf)
                     break
-            if found_sf:
-                if current_product["surface"]:
-                    products.append(current_product.copy())
-                    current_product["surface"] = found_sf
-                else:
-                    current_product["surface"] = found_sf
-                continue
+            if found_sf: continue
 
             # 3. Name (Product Title)
             temp_clean = clean
@@ -179,46 +170,32 @@ class PageMetadataExtractor:
                     break
             
             upper_only = "".join(c for c in temp_clean if c.isupper())
-            # Relaxed check: at least 4 uppercase chars and > 50% uppercase
             if len(temp_clean) > 4 and len(upper_only) >= 4 and len(upper_only) / len(temp_clean) > 0.5:
-                if current_product["name"]:
-                    products.append(current_product.copy())
-                    current_product = {"name": "", "size": "", "surface": ""}
-                current_product["name"] = temp_clean.title()
+                name = temp_clean.title()
+                if name not in all_names: all_names.append(name)
 
-        if current_product["name"] or current_product["size"] or current_product["surface"]:
-            products.append(current_product)
-
-        # 4. "Super-Greedy" Fallback: If still no products found, search the entire raw text
-        if not products:
-            raw_text = doc[pno].get_text()
-            found_sizes = self.SIZE_RE.findall(raw_text)
-            found_surfaces = []
-            low_text = raw_text.lower()
-            for sf in self.KNOWN_SURFACES:
-                if sf in low_text:
-                    found_surfaces.append(sf.title())
+        # 4. Also use the "Super-Greedy" Fallback on the raw text to ensure nothing is missed
+        raw_text = doc[pno].get_text()
+        found_sizes = self.SIZE_RE.findall(raw_text)
+        for s in found_sizes:
+            size_str = f"{s[0]}x{s[1]}{s[2] or 'mm'}"
+            if size_str not in all_sizes: all_sizes.append(size_str)
             
-            # If we found any sizes or surfaces, create a "General" product entry
-            if found_sizes or found_surfaces:
-                size_str = ", ".join([f"{s[0]}x{s[1]}{s[2] or 'mm'}" for s in found_sizes])
-                surf_str = ", ".join(list(set(found_surfaces)))
-                products.append({
-                    "name": "Catalogue Specs",
-                    "size": size_str or "-",
-                    "surface": surf_str or "-"
-                })
+        low_text = raw_text.lower()
+        for sf in self.KNOWN_SURFACES:
+            if sf in low_text:
+                surf = sf.title()
+                if surf not in all_surfaces: all_surfaces.append(surf)
 
-        # Deduplicate
-        final_products = []
-        seen = set()
-        for p in products:
-            key = (p["name"], p["size"], p["surface"])
-            if key not in seen and (p["name"] or p["size"] or p["surface"]):
-                seen.add(key)
-                final_products.append(p)
+        # 5. Return a single aggregated product for the page
+        if all_names or all_sizes or all_surfaces:
+            return {"products": [{
+                "name": "<br>".join(all_names) if all_names else "-",
+                "size": "<br>".join(all_sizes) if all_sizes else "-",
+                "surface": "<br>".join(all_surfaces) if all_surfaces else "-"
+            }]}
 
-        return {"products": final_products}
+        return {"products": []}
 
     def _get_lines_with_bbox(self, words):
         if not words: return []
