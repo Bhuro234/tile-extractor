@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Image Extraction</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="marble-background"></div>
+
+    <div class="container">
+        <header class="glass-panel header-glass">
+            <h1>Tile Image Extraction</h1>
+            <p class="subtitle">Lossless extraction of high-quality tile product images from your catalogues.</p>
+            <div class="benefits-row">
+                <span class="benefit-badge"><i class="fa-solid fa-bolt"></i> Lightning Fast</span>
+                <span class="benefit-badge"><i class="fa-solid fa-gem"></i> Lossless Quality</span>
+                <span class="benefit-badge"><i class="fa-solid fa-box-archive"></i> Bulk Download</span>
+                <span class="benefit-badge"><i class="fa-solid fa-table"></i> Smart Metadata</span>
+            </div>
+        </header>
+
+        <main>
+            <section id="upload-section" class="glass-panel">
+                <div id="drop-zone" class="drop-zone">
+                    <div class="icon-container">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h2>Drag & Drop your PDF catalogue here</h2>
+                    <p>or click to browse files</p>
+                    <input type="file" id="file-input" accept="application/pdf" hidden>
+                </div>
+            </section>
+
+            <section id="loading-section" class="glass-panel hidden">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">0%</div>
+                </div>
+                <h2 id="loading-status">Extracting Tiles...</h2>
+                <p>This may take a few moments depending on the catalogue size.</p>
+            </section>
+
+            <section id="results-section" class="hidden">
+                <div class="results-header">
+                    <h2>Extracted Tiles</h2>
+                    <div class="stats" id="results-stats">
+                        <span class="stat-badge"><i class="fa-solid fa-image"></i> <span id="stat-count">0</span> tiles</span>
+                        <a id="download-all-btn" href="#" class="btn-secondary" style="display: none;">
+                            <i class="fa-solid fa-file-zipper"></i> Download All
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="masonry-grid" id="gallery">
+                    <!-- Images will be injected here -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p class="footer-main">Built by Somya Bhalani</p>
+            <div class="footer-links">
+                <a href="https://github.com/somyabhalani" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+                <a href="tel:8320408204"><i class="fa-solid fa-phone"></i> 8320408204</a>
+            </div>
+            <p class="footer-rights">&copy; 2026 All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <span class="close-btn">&times;</span>
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="Expanded View">
+            <div class="lightbox-info glass-panel">
+                <h3 id="lb-filename">filename.png</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Dimensions</span>
+                        <span class="value" id="lb-dims">1000x1000</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Size</span>
+                        <span class="value" id="lb-size">500 KB</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Format</span>
+                        <span class="value" id="lb-format">PNG</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Page</span>
+                        <span class="value" id="lb-page">1</span>
+                    </div>
+                </div>
+                <a id="lb-download" href="#" download class="btn-primary">
+                    <i class="fa-solid fa-download"></i> Download Full Size
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
