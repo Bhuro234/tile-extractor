@@ -131,18 +131,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
-    async function fetchResults(jobId) {
+    async function fetchResults(jobId, attempt = 0) {
+        const MAX_ATTEMPTS = 10;
         try {
             const res = await fetch(`/api/results/${jobId}`);
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
             const data = await res.json();
+
+            if (!data.images) throw new Error('No images data in response.');
             
             renderGallery(data.images, jobId);
             
             loadingSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
         } catch (error) {
-            console.error(error);
-            alert('Error fetching results.');
+            console.error(`Fetch attempt ${attempt + 1} failed:`, error);
+            if (attempt < MAX_ATTEMPTS) {
+                // Retry after 1 second
+                setTimeout(() => fetchResults(jobId, attempt + 1), 1000);
+            } else {
+                alert('Could not load results after several attempts. Please try refreshing the page.');
+                loadingSection.classList.add('hidden');
+                uploadSection.classList.remove('hidden');
+            }
         }
     }
 
