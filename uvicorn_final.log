@@ -1,0 +1,272 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\somya\\.gemini\\antigravity\\scratch\\TileExtractor']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [2032] using StatReload
+INFO:     Started server process [1448]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:62690 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62690 - "GET /style.css?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /script.js?v=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /marble-bg.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61321 - "POST /api/upload HTTP/1.1" 200 OK
+  Extracting images...
+  0%|          | 0/144 [00:00<?, ?it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+  1%|          | 1/144 [00:00<00:40,  3.56it/s]  2%|2         | 3/144 [00:00<00:21,  6.53it/s]  3%|2         | 4/144 [00:00<00:19,  7.36it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+  3%|3         | 5/144 [00:00<00:20,  6.65it/s]  4%|4         | 6/144 [00:00<00:20,  6.72it/s]  5%|4         | 7/144 [00:01<00:21,  6.51it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+  6%|6         | 9/144 [00:01<00:15,  8.94it/s] 12%|#1        | 17/144 [00:01<00:05, 23.96it/s] 14%|#3        | 20/144 [00:01<00:06, 20.09it/s] 19%|#8        | 27/144 [00:01<00:03, 30.17it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+ 23%|##2       | 33/144 [00:01<00:03, 35.99it/s] 28%|##7       | 40/144 [00:01<00:02, 43.63it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+ 31%|###1      | 45/144 [00:02<00:03, 26.76it/s] 36%|###6      | 52/144 [00:02<00:02, 33.73it/s] 41%|####      | 59/144 [00:02<00:02, 38.75it/s] 47%|####6     | 67/144 [00:02<00:01, 45.24it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+ 52%|#####2    | 75/144 [00:02<00:01, 37.42it/s] 56%|#####5    | 80/144 [00:03<00:01, 35.70it/s] 60%|#####9    | 86/144 [00:03<00:01, 40.20it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+ 65%|######4   | 93/144 [00:03<00:01, 45.17it/s] 69%|######8   | 99/144 [00:03<00:00, 47.66it/s] 73%|#######2  | 105/144 [00:03<00:00, 46.29it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+ 76%|#######6  | 110/144 [00:03<00:01, 27.15it/s] 79%|#######9  | 114/144 [00:04<00:01, 28.60it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+ 82%|########1 | 118/144 [00:04<00:00, 27.56it/s] 85%|########5 | 123/144 [00:04<00:00, 29.00it/s] 90%|######### | 130/144 [00:04<00:00, 36.19it/s] 94%|#########3| 135/144 [00:04<00:00, 39.12it/s] 98%|#########7| 141/144 [00:04<00:00, 43.09it/s]INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+100%|##########| 144/144 [00:04<00:00, 29.34it/s]
+Extraction complete: 126 tiles saved, 4 filtered.
+INFO:     127.0.0.1:61321 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/results/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0001_1678x1664_19.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0002_1244x1953_28.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0002_1244x1952_29.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0003_1244x1953_35.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0004_1678x2387_41.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0004_1245x1953_42.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0005_1520x2230_48.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0005_1678x1263_49.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_639x639_55.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_56.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_57.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_58.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_639x639_59.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_60.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_61.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_62.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_639x639_63.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_65.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_67.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_69.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_639x639_70.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_71.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_72.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0006_214x214_73.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_639x639_79.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_80.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_81.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_82.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_639x639_83.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_84.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_86.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_85.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_639x639_87.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_88.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_89.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_90.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_639x639_91.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_92.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_93.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0007_214x214_94.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0008_1520x2230_100.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0008_1677x1262_101.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_639x639_107.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_108.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_109.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_110.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_638x638_111.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_114.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_639x639_115.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_112.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_116.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_117.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_118.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_639x639_119.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_120.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_122.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0009_214x214_121.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_639x639_128.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_214x214_129.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_214x214_131.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_639x639_136.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_639x639_132.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_214x214_133.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_214x214_137.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_214x214_139.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_639x639_140.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_214x214_141.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0010_214x214_143.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0011_1520x2228_149.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0011_1678x1263_150.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_639x639_156.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_214x214_157.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_639x639_160.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_214x214_161.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_639x639_164.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_214x214_165.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_639x639_168.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0012_214x214_169.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_639x639_177.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_178.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_179.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_180.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_639x639_181.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_182.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_183.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_184.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_639x639_185.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_186.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_187.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_188.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_639x639_189.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_190.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_191.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0013_214x214_192.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0015_1678x1622_204.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0015_1344x1327_205.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0015_1344x1327_206.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0015_452x402_209.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0015_97x196_210.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0015_97x194_211.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_1680x1651_222.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_251x134_223.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_252x135_224.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_252x135_225.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_251x134_226.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_251x134_227.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_1549x1303_228.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_176x269_277.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_176x269_276.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_182x288_293.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_174x270_285.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_182x288_292.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_174x270_284.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_193x289_301.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_193x289_300.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_199x308_309.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_199x308_308.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_194x302_317.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_194x302_316.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_210x334_325.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59842 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_210x334_324.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61321 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_177x139_327.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54688 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_177x139_326.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57258 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_95x103_328.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_108x117_330.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/images/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a/tile_p0016_1041x921_334.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "POST /api/scan/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+  Scanning page-wise specifications...
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO: Could not find files for the given pattern(s).
+C:\Users\somya\AppData\Local\Programs\Python\Python310\lib\site-packages\paddle\utils\cpp_extension\extension_utils.py:712: UserWarning: No ccache found. Please be aware that recompiling all source files may be required. You can download and install ccache from: https://github.com/ccache/ccache/blob/master/doc/INSTALL.md
+  warnings.warn(warning_message)
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+[32mCreating model: ('PP-LCNet_x1_0_doc_ori', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `C:\Users\somya\.paddlex\official_models\PP-LCNet_x1_0_doc_ori`.[0m
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+I0506 23:01:07.851856 12332 onednn_context.cc:81] oneDNN v3.6.2
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+[32mCreating model: ('UVDoc', None, None)[0m
+[33mChecking connectivity to the model hosters, this may take a while. To bypass this check, set `PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK` to `True`.[0m
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+[32mUsing official model (UVDoc), the model files will be automatically downloaded and saved in `C:\Users\somya\.paddlex\official_models\UVDoc`.[0m
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:  17%|#6        | 1/6 [00:00<00:02,  1.77it/s]Fetching 6 files:  50%|#####     | 3/6 [00:00<00:00,  5.29it/s]INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:  83%|########3 | 5/6 [00:05<00:01,  1.23s/it]Fetching 6 files: 100%|##########| 6/6 [00:05<00:00,  1.18it/s]
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+[32mCreating model: ('PP-OCRv5_server_det', None, None)[0m
+[32mUsing official model (PP-OCRv5_server_det), the model files will be automatically downloaded and saved in `C:\Users\somya\.paddlex\official_models\PP-OCRv5_server_det`.[0m
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:  17%|#6        | 1/6 [00:00<00:02,  1.71it/s]INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:  83%|########3 | 5/6 [00:05<00:01,  1.16s/it]Fetching 6 files: 100%|##########| 6/6 [00:05<00:00,  1.07it/s]
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+[32mCreating model: ('en_PP-OCRv5_mobile_rec', None, None)[0m
+[32mUsing official model (en_PP-OCRv5_mobile_rec), the model files will be automatically downloaded and saved in `C:\Users\somya\.paddlex\official_models\en_PP-OCRv5_mobile_rec`.[0m
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:  17%|#6        | 1/6 [00:00<00:03,  1.50it/s]INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+Fetching 6 files:  83%|########3 | 5/6 [00:01<00:00,  3.12it/s]Fetching 6 files: 100%|##########| 6/6 [00:01<00:00,  3.51it/s]
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 0: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56988 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 1: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 2: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 3: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 4: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 5: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+PaddleOCR failed for page 6: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 7: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+PaddleOCR failed for page 8: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+PaddleOCR failed for page 9: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 10: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+PaddleOCR failed for page 11: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 12: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+PaddleOCR failed for page 13: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 14: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+PaddleOCR failed for page 15: PaddleOCR.predict() got an unexpected keyword argument 'cls'
+INFO:     127.0.0.1:56742 - "GET /api/progress/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56742 - "GET /api/results/83a7483e-dd71-4ea8-bd47-c9b3b90a7e8a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64075 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:64075 - "GET /script.js?v=2 HTTP/1.1" 304 Not Modified
+WARNING:  StatReload detected changes in 'tile_extractor.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1448]

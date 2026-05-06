@@ -76,28 +76,53 @@ class PageMetadataExtractor:
             try:
                 global ocr_model
                 if ocr_model is None:
-                    ocr_model = PaddleOCR(use_angle_cls=False, lang='en')
+                    # Aggressive CPU optimization: Lower detection limit and disable mkldnn
+                    ocr_model = PaddleOCR(use_textline_orientation=False, lang='en', 
+                                          enable_mkldnn=False, det_limit_side_len=480)
                 
                 page = doc[pno]
-                mat = fitz.Matrix(2, 2)
+                # High speed: 0.5x zoom for OCR (adequate for large catalog text)
+                mat = fitz.Matrix(0.5, 0.5)
                 pix = page.get_pixmap(matrix=mat)
                 
                 img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
                 img_np = np.array(img)
                 
-                result = ocr_model.ocr(img_np, cls=False)
+                # Removed cls=False as it causes 'unexpected keyword argument' error
+                result = ocr_model.ocr(img_np)
                 words = []
                 if result and result[0]:
-                    for line in result[0]:
-                        box = line[0]
-                        text = line[1][0]
-                        if text.strip():
-                            xs = [pt[0] for pt in box]
-                            ys = [pt[1] for pt in box]
-                            words.append({
-                                'text': text,
-                                'bbox': [min(xs)/2.0, min(ys)/2.0, max(xs)/2.0, max(ys)/2.0]
-                            })
+                    res = result[0]
+                    # Support for PaddleX OCRResult (Dictionary-like)
+                    if isinstance(res, dict) or hasattr(res, 'keys'):
+                        texts = res.get('rec_texts', [])
+                        boxes = res.get('rec_boxes', [])
+                        for text, box in zip(texts, boxes):
+                            if text.strip():
+                                # box is typically [x0, y0, x1, y1] or 4 points
+                                if len(box) == 4 and not isinstance(box[0], (list, tuple)):
+                                    # Scale up by 2x since we used 0.5x zoom
+                                    bbox = [box[0]*2.0, box[1]*2.0, box[2]*2.0, box[3]*2.0]
+                                else:
+                                    # 4 points: [[x0,y0], [x1,y1], [x2,y2], [x3,y3]]
+                                    # Scale up by 2x since we used 0.5x zoom
+                                    xs = [pt[0]*2.0 for pt in box]
+                                    ys = [pt[1]*2.0 for pt in box]
+                                    bbox = [min(xs), min(ys), max(xs), max(ys)]
+                                words.append({'text': text, 'bbox': bbox})
+                    # Support for standard PaddleOCR (List of lists)
+                    else:
+                        for line in res:
+                            box = line[0]
+                            text = line[1][0]
+                            if text.strip():
+                                # Scale up by 2x since we used 0.5x zoom
+                                xs = [pt[0]*2.0 for pt in box]
+                                ys = [pt[1]*2.0 for pt in box]
+                                words.append({
+                                    'text': text,
+                                    'bbox': [min(xs), min(ys), max(xs), max(ys)]
+                                })
                 self._current_page_data = words
                 self._current_pno = pno
                 return
