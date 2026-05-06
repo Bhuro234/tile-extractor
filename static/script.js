@@ -125,10 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Start timer once we know the total pages
                 if (data.total && !timerStarted) {
                     timerStarted = true;
+
                     // Check if OCR is actually working on the server
                     if (data.ocr_enabled === false) {
-                        console.warn("OCR engine is not detected on the server.");
-                        document.getElementById('loading-status').textContent = "OCR Engine Offline - Names/Sizes will be missing";
+                        console.warn("Fallback OCR engine is offline.");
+                        document.getElementById('loading-status').textContent = "Scanning (Fallback OCR Offline)";
                     }
 
                     // Estimate: 5s per page on average * 1.5 safety factor

@@ -34,28 +34,12 @@ except ImportError:
     HAS_TQDM = False
 
 try:
-    import pytesseract
-    # Tesseract Path Configuration
-    TESS_PATH_WIN = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    TESS_PATH_LINUX = '/usr/bin/tesseract'
-    
-    if os.path.exists(TESS_PATH_WIN):
-        pytesseract.pytesseract.tesseract_cmd = TESS_PATH_WIN
-    elif os.path.exists(TESS_PATH_LINUX):
-        pytesseract.pytesseract.tesseract_cmd = TESS_PATH_LINUX
-    else:
-        # Default fallback
-        pytesseract.pytesseract.tesseract_cmd = 'tesseract'
-
+    from paddleocr import PaddleOCR
+    import numpy as np
     HAS_OCR = True
-    try:
-        pytesseract.get_tesseract_version()
-    except Exception:
-        print("WARNING: Tesseract not found in PATH or standard location.")
-        HAS_OCR = False
+    ocr_model = None
 except ImportError:
     HAS_OCR = False
-
 
 # ── Page Metadata Extractor (Spatial OCR) ──────────────────────────────────
 
@@ -82,7 +66,7 @@ class PageMetadataExtractor:
         if self._current_pno == pno:
             return
         
-        # 1. Try PyMuPDF native text extraction FIRST (Near-instant, works for digital PDFs)
+        # 1. Try PyMuPDF native text extraction (Near-instant, works for digital PDFs)
         try:
             page = doc[pno]
             raw_words = page.get_text("words") # x0, y0, x1, y1, word, block_no, line_no, word_no
@@ -102,29 +86,35 @@ class PageMetadataExtractor:
         # 2. Try OCR only if Native failed (For scanned/image-only PDFs)
         if HAS_OCR:
             try:
+                global ocr_model
+                if ocr_model is None:
+                    ocr_model = PaddleOCR(use_angle_cls=False, lang='en', show_log=False)
+                
                 page = doc[pno]
                 mat = fitz.Matrix(2, 2)
                 pix = page.get_pixmap(matrix=mat)
-                img = Image.open(io.BytesIO(pix.tobytes("png")))
                 
-                data = pytesseract.image_to_data(img, output_type=pytesseract.Output.DICT)
+                img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
+                img_np = np.array(img)
+                
+                result = ocr_model.ocr(img_np, cls=False)
                 words = []
-                for i in range(len(data['text'])):
-                    txt = data['text'][i].strip()
-                    if txt:
-                        words.append({
-                            'text': txt,
-                            'bbox': [
-                                data['left'][i]/2.0, data['top'][i]/2.0,
-                                (data['left'][i] + data['width'][i])/2.0,
-                                (data['top'][i] + data['height'][i])/2.0
-                            ]
-                        })
+                if result and result[0]:
+                    for line in result[0]:
+                        box = line[0]
+                        text = line[1][0]
+                        if text.strip():
+                            xs = [pt[0] for pt in box]
+                            ys = [pt[1] for pt in box]
+                            words.append({
+                                'text': text,
+                                'bbox': [min(xs)/2.0, min(ys)/2.0, max(xs)/2.0, max(ys)/2.0]
+                            })
                 self._current_page_data = words
                 self._current_pno = pno
                 return
             except Exception as e:
-                print(f"OCR failed for page {pno}: {e}")
+                print(f"PaddleOCR failed for page {pno}: {e}")
 
         self._current_page_data = []
         self._current_pno = pno

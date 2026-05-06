@@ -25,10 +25,6 @@ Built by [Somya Bhalani](https://github.com/somyabhalani)
 
 You will need the following installed on your machine:
 - **Python 3.9+** and `pip`
-- **Tesseract OCR** (Required for reading text from scanned PDFs)
-  - **Windows**: Download the installer from [UB-Mannheim](https://github.com/UB-Mannheim/tesseract/wiki) and install it. Ensure it installs to `C:\Program Files\Tesseract-OCR\tesseract.exe`.
-  - **Linux (Ubuntu/Debian)**: Run `sudo apt-get install tesseract-ocr`
-  - **Mac**: Run `brew install tesseract`
 
 ### 2. Installation
 
@@ -46,9 +42,6 @@ pip install -r requirements.txt
 ```
 
 ### 3. Run Locally
-
-> [!TIP]
-> **Highly Recommended:** Scanned PDFs require Tesseract OCR to read text. This process is resource-intensive and runs much faster and more reliably on your local machine compared to basic cloud hosting tiers.
 
 Start the local server using Uvicorn:
 
