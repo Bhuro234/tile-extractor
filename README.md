@@ -21,29 +21,45 @@ Built by [Somya Bhalani](https://github.com/somyabhalani)
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### 1. Prerequisites
 
-- Python 3.9+
-- pip
+You will need the following installed on your machine:
+- **Python 3.9+** and `pip`
+- **Tesseract OCR** (Required for reading text from scanned PDFs)
+  - **Windows**: Download the installer from [UB-Mannheim](https://github.com/UB-Mannheim/tesseract/wiki) and install it. Ensure it installs to `C:\Program Files\Tesseract-OCR\tesseract.exe`.
+  - **Linux (Ubuntu/Debian)**: Run `sudo apt-get install tesseract-ocr`
+  - **Mac**: Run `brew install tesseract`
 
-### Installation
+### 2. Installation
+
+Open your terminal or command prompt and run:
 
 ```bash
+# Clone the repository
 git clone https://github.com/somyabhalani/tile-extractor.git
+
+# Navigate into the folder
 cd tile-extractor
+
+# Install the required Python libraries
 pip install -r requirements.txt
 ```
 
-### Run Locally
+### 3. Run Locally
 
 > [!TIP]
-> **Highly Recommended:** For the best text metadata extraction (Name, Size, Surface), you should run this application locally. Scanned PDFs require Tesseract OCR, which runs much faster and more reliably on a local machine than on basic cloud hosting tiers.
+> **Highly Recommended:** Scanned PDFs require Tesseract OCR to read text. This process is resource-intensive and runs much faster and more reliably on your local machine compared to basic cloud hosting tiers.
+
+Start the local server using Uvicorn:
 
 ```bash
 uvicorn app:app --reload
 ```
 
-Then open your browser and go to: **http://127.0.0.1:8000**
+### 4. Open in Browser
+
+Once the server is running, open your web browser and go to:
+**http://localhost:8000**
 
 ---
 
