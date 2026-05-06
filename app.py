@@ -1,5 +1,6 @@
 import os
 import csv
+import json
 import shutil
 import uuid
 from pathlib import Path
@@ -68,18 +69,37 @@ async def get_progress(job_id: str):
 async def get_results(job_id: str):
     job_dir = JOBS_DIR / job_id
     csv_path = job_dir / "output" / "tiles_report.csv"
-    
+    meta_path = job_dir / "output" / "pages_metadata.json"
+
     if not csv_path.exists():
-        # Maybe no tiles were found
-        return {"images": []}
-        
-    images = []
+        return {"pages": []}
+
+    # Load images from CSV
+    images_by_page = {}
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            images.append(row)
-            
-    return {"images": images}
+            pno = row["page"]
+            images_by_page.setdefault(pno, []).append(row)
+
+    # Load page metadata if available
+    page_meta = {}
+    if meta_path.exists():
+        with open(meta_path, "r", encoding="utf-8") as f:
+            page_meta = json.load(f)
+
+    # Build page-grouped response
+    pages = []
+    for pno in sorted(images_by_page.keys(), key=lambda x: int(x)):
+        meta = page_meta.get(str(pno), {})
+        pages.append({
+            "page": int(pno),
+            "metadata": meta,
+            "images": images_by_page[pno]
+        })
+
+    return {"pages": pages}
+
 
 @app.get("/api/images/{job_id}/{filename}")
 async def get_image(job_id: str, filename: str):

@@ -232,6 +232,120 @@ header p.subtitle {
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
+/* Page Groups */
+.page-group {
+    margin-bottom: 3.5rem;
+}
+
+.page-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    padding-left: 4px;
+}
+
+/* Split Layout */
+.split-container {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.portion-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+}
+
+.images-portion {
+    flex: 2.5; /* Larger area for images */
+}
+
+.data-portion {
+    flex: 1; /* Smaller area for specs */
+    position: sticky;
+    top: 2rem;
+}
+
+.portion-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* Data Table */
+.data-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr 1.2fr;
+    gap: 1rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    transition: background 0.2s;
+}
+
+.table-row:not(.table-header):hover {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.table-header {
+    font-weight: 700;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--primary);
+    background: rgba(212, 175, 55, 0.08);
+}
+
+.col-name { 
+    word-wrap: break-word;
+}
+
+@media (max-width: 1100px) {
+    .split-container {
+        flex-direction: column;
+    }
+    .data-portion {
+        position: static;
+        width: 100%;
+    }
+}
+
+.meta-icon {
+    font-size: 1rem;
+}
+
+.meta-label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.meta-value {
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
 /* Masonry Grid */
 .masonry-grid {
     display: grid;

@@ -138,89 +138,182 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error(`Server error: ${res.status}`);
             const data = await res.json();
 
-            if (!data.images) throw new Error('No images data in response.');
-            
-            renderGallery(data.images, jobId);
-            
+            if (!data.pages) throw new Error('No pages data in response.');
+
+            renderGallery(data.pages, jobId);
+
             loadingSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
         } catch (error) {
             console.error(`Fetch attempt ${attempt + 1} failed:`, error);
             if (attempt < MAX_ATTEMPTS) {
-                // Retry after 1 second
                 setTimeout(() => fetchResults(jobId, attempt + 1), 1000);
             } else {
-                alert('Could not load results after several attempts. Please try refreshing the page.');
+                alert('Could not load results. Please try refreshing the page.');
                 loadingSection.classList.add('hidden');
                 uploadSection.classList.remove('hidden');
             }
         }
     }
 
-    // Rendering
-    function renderGallery(images, jobId) {
+    // Rendering — page-grouped layout with metadata cards
+    function renderGallery(pages, jobId) {
         gallery.innerHTML = '';
-        statCount.textContent = images.length;
-        
+
+        // Count total tiles
+        const totalTiles = pages.reduce((sum, p) => sum + p.images.length, 0);
+        statCount.textContent = totalTiles;
+
         const downloadAllBtn = document.getElementById('download-all-btn');
 
-        if (images.length === 0) {
-            gallery.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No tiles found in this document.</p>';
-            if(downloadAllBtn) downloadAllBtn.style.display = 'none';
+        if (totalTiles === 0) {
+            gallery.innerHTML = '<p style="text-align:center;color:var(--text-muted)">No tiles found in this document.</p>';
+            if (downloadAllBtn) downloadAllBtn.style.display = 'none';
             return;
         }
 
-        if(downloadAllBtn) {
+        if (downloadAllBtn) {
             downloadAllBtn.href = `/api/download/${jobId}`;
             downloadAllBtn.style.display = 'inline-flex';
         }
 
-        images.forEach((imgData, index) => {
-            const imgUrl = `/api/images/${jobId}/${imgData.filename}`;
-            
-            const card = document.createElement('div');
-            card.className = 'tile-card';
-            card.style.animationDelay = `${index * 0.05}s`;
-            
-            const img = document.createElement('img');
-            img.src = imgUrl;
-            img.alt = imgData.filename;
-            
-            // Wait for image to load to set row span for masonry effect
-            img.onload = () => {
-                const rowHeight = 20;
-                const gap = 20;
-                const height = img.naturalHeight * (card.clientWidth / img.naturalWidth);
-                const rowSpan = Math.ceil((height + gap) / (rowHeight + gap)) + 3; // +3 for overlay padding space
-                card.style.gridRowEnd = `span ${rowSpan}`;
-            };
+        let imgIndex = 0;
 
-            const overlay = document.createElement('div');
-            overlay.className = 'tile-overlay';
-            overlay.innerHTML = `
-                <p>Page ${imgData.page}</p>
-                <div class="dim">${imgData.width_px} &times; ${imgData.height_px} px</div>
+        pages.forEach(pageData => {
+            const { page, metadata, images } = pageData;
+
+            // Page group wrapper
+            const group = document.createElement('div');
+            group.className = 'page-group';
+
+            // Page label
+            const pageLabel = document.createElement('div');
+            pageLabel.className = 'page-label';
+            pageLabel.textContent = `Page ${page}`;
+            group.appendChild(pageLabel);
+
+            // Split Container for Images and Data
+            const splitContainer = document.createElement('div');
+            splitContainer.className = 'split-container';
+
+            // --- Portion 1: Images Card ---
+            const imagesCard = document.createElement('div');
+            imagesCard.className = 'portion-card images-portion';
+            imagesCard.innerHTML = `<div class="portion-title">Images</div>`;
+            
+            const grid = document.createElement('div');
+            grid.className = 'masonry-grid';
+
+            images.forEach(imgData => {
+                const imgUrl = `/api/images/${jobId}/${imgData.filename}`;
+                const card = document.createElement('div');
+                card.className = 'tile-card';
+                card.style.animationDelay = `${imgIndex * 0.04}s`;
+                imgIndex++;
+
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.alt = imgData.filename;
+                img.onload = () => {
+                    const rowHeight = 20, gap = 20;
+                    const height = img.naturalHeight * (card.clientWidth / img.naturalWidth);
+                    const rowSpan = Math.ceil((height + gap) / (rowHeight + gap)) + 3;
+                    card.style.gridRowEnd = `span ${rowSpan}`;
+                };
+
+                const overlay = document.createElement('div');
+                overlay.className = 'tile-overlay';
+                overlay.innerHTML = `<p>${imgData.name || 'Tile'}</p>`;
+
+                card.appendChild(img);
+                card.appendChild(overlay);
+                card.addEventListener('click', () => openLightbox(imgUrl, imgData));
+                grid.appendChild(card);
+            });
+            
+            imagesCard.appendChild(grid);
+
+            // --- Portion 2: Data Card ---
+            const dataCard = document.createElement('div');
+            dataCard.className = 'portion-card data-portion';
+            dataCard.innerHTML = `<div class="portion-title">Specifications</div>`;
+
+            const table = document.createElement('div');
+            table.className = 'data-table';
+            
+            // Header
+            table.innerHTML = `
+                <div class="table-row table-header">
+                    <div class="col-name">Name</div>
+                    <div class="col-size">Size</div>
+                    <div class="col-surface">Surface</div>
+                </div>
             `;
 
-            card.appendChild(img);
-            card.appendChild(overlay);
-            gallery.appendChild(card);
+            if (metadata && metadata.products) {
+                metadata.products.forEach(prod => {
+                    const row = document.createElement('div');
+                    row.className = 'table-row';
+                    row.innerHTML = `
+                        <div class="col-name">${prod.name || '-'}</div>
+                        <div class="col-size">${prod.size || '-'}</div>
+                        <div class="col-surface">${prod.surface || '-'}</div>
+                    `;
+                    table.appendChild(row);
+                });
+            }
 
-            // Lightbox interaction
-            card.addEventListener('click', () => openLightbox(imgUrl, imgData));
+            dataCard.appendChild(table);
+
+            // Add portions to split container
+            splitContainer.appendChild(imagesCard);
+            splitContainer.appendChild(dataCard);
+            group.appendChild(splitContainer);
+            
+            gallery.appendChild(group);
         });
     }
+
 
     // Lightbox Logic
     function openLightbox(url, data) {
         lbImg.src = url;
-        lbFilename.textContent = data.filename;
-        lbDims.textContent = `${data.width_px} x ${data.height_px} px`;
-        lbSize.textContent = `${data.size_kb} KB`;
-        lbFormat.textContent = data.format;
-        lbPage.textContent = `Page ${data.page}`;
+        lbFilename.textContent = data.name || data.filename;
+        lbDims.textContent = `${data.width_px} x ${data.height_px}`;
+        lbPage.textContent = data.page;
         lbDownload.href = url;
+
+        // Dynamic Info Grid for Lightbox
+        const infoGrid = document.querySelector('.info-grid');
         
+        const formatBytes = (bytes) => {
+            if (!bytes) return '-';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        };
+
+        infoGrid.innerHTML = `
+            <div class="info-item"><span class="label">Dimensions</span><span class="value">${data.width_px} x ${data.height_px} px</span></div>
+            <div class="info-item"><span class="label">File Size</span><span class="value">${formatBytes(data.size_bytes)}</span></div>
+        `;
+
+        const fields = [
+            { key: 'size',      label: 'Size' },
+            { key: 'surface',   label: 'Surface' },
+            { key: 'thickness', label: 'Thickness' },
+            { key: 'faces',     label: 'Faces' }
+        ];
+
+        fields.forEach(({ key, label }) => {
+            if (data[key]) {
+                const item = document.createElement('div');
+                item.className = 'info-item';
+                item.innerHTML = `<span class="label">${label}</span><span class="value">${data[key]}</span>`;
+                infoGrid.appendChild(item);
+            }
+        });
+
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
