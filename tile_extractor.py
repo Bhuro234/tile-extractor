@@ -177,15 +177,18 @@ class PageMetadataExtractor:
                 surf = sf.title()
                 if surf not in all_surfaces: all_surfaces.append(surf)
 
-        # 5. Return a single aggregated product for the page
+        # 5. Return a single aggregated product for the page, plus the raw text
         if all_names or all_sizes or all_surfaces:
-            return {"products": [{
-                "name": "<br>".join(all_names) if all_names else "-",
-                "size": "<br>".join(all_sizes) if all_sizes else "-",
-                "surface": "<br>".join(all_surfaces) if all_surfaces else "-"
-            }]}
+            return {
+                "products": [{
+                    "name": "<br>".join(all_names) if all_names else "-",
+                    "size": "<br>".join(all_sizes) if all_sizes else "-",
+                    "surface": "<br>".join(all_surfaces) if all_surfaces else "-"
+                }],
+                "raw_text": raw_text
+            }
 
-        return {"products": []}
+        return {"products": [], "raw_text": raw_text}
 
     def _get_lines_with_bbox(self, words):
         if not words: return []

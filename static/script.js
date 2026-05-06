@@ -251,10 +251,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const scanDataBtn = document.getElementById('scan-data-btn');
         let hasScannedData = false;
         
-        // Check if any page has metadata
+        // Check if any page has metadata products or raw text
         pages.forEach(pageData => {
-            if (pageData.metadata && pageData.metadata.products && pageData.metadata.products.length > 0) {
-                hasScannedData = true;
+            if (pageData.metadata) {
+                if (pageData.metadata.products && pageData.metadata.products.length > 0) hasScannedData = true;
+                if (pageData.metadata.raw_text && pageData.metadata.raw_text.trim().length > 0) hasScannedData = true;
             }
         });
 
@@ -333,36 +334,68 @@ document.addEventListener('DOMContentLoaded', () => {
             imagesCard.appendChild(grid);
             splitContainer.appendChild(imagesCard);
 
-            // --- Portion 2: Data Card --- (ONLY if metadata exists)
-            if (metadata && metadata.products && metadata.products.length > 0) {
+            // --- Portion 2: Data Card --- (If metadata products OR raw text exists)
+            const hasProducts = metadata && metadata.products && metadata.products.length > 0;
+            const hasRawText = metadata && metadata.raw_text && metadata.raw_text.trim().length > 0;
+
+            if (hasProducts || hasRawText) {
                 const dataCard = document.createElement('div');
                 dataCard.className = 'portion-card data-portion';
-                dataCard.innerHTML = `<div class="portion-title">Specifications</div>`;
+                dataCard.innerHTML = `<div class="portion-title">Text Data</div>`;
 
-                const table = document.createElement('div');
-                table.className = 'data-table';
-                
-                // Header
-                table.innerHTML = `
-                    <div class="table-row table-header">
-                        <div class="col-name">Name</div>
-                        <div class="col-size">Size</div>
-                        <div class="col-surface">Surface</div>
-                    </div>
-                `;
-
-                metadata.products.forEach(prod => {
-                    const row = document.createElement('div');
-                    row.className = 'table-row';
-                    row.innerHTML = `
-                        <div class="col-name">${prod.name || '-'}</div>
-                        <div class="col-size">${prod.size || '-'}</div>
-                        <div class="col-surface">${prod.surface || '-'}</div>
+                // Render Table if products exist
+                if (hasProducts) {
+                    const table = document.createElement('div');
+                    table.className = 'data-table';
+                    
+                    // Header
+                    table.innerHTML = `
+                        <div class="table-row table-header">
+                            <div class="col-name">Name</div>
+                            <div class="col-size">Size</div>
+                            <div class="col-surface">Surface</div>
+                        </div>
                     `;
-                    table.appendChild(row);
-                });
 
-                dataCard.appendChild(table);
+                    metadata.products.forEach(prod => {
+                        const row = document.createElement('div');
+                        row.className = 'table-row';
+                        row.innerHTML = `
+                            <div class="col-name">${prod.name || '-'}</div>
+                            <div class="col-size">${prod.size || '-'}</div>
+                            <div class="col-surface">${prod.surface || '-'}</div>
+                        `;
+                        table.appendChild(row);
+                    });
+
+                    dataCard.appendChild(table);
+                }
+
+                // Render Raw Text if it exists
+                if (hasRawText) {
+                    const rawContainer = document.createElement('div');
+                    rawContainer.style.marginTop = '15px';
+                    rawContainer.style.padding = '10px';
+                    rawContainer.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                    rawContainer.style.borderRadius = '8px';
+                    rawContainer.style.fontSize = '0.85rem';
+                    rawContainer.style.color = 'var(--text-color)';
+                    rawContainer.style.whiteSpace = 'pre-wrap';
+                    rawContainer.style.maxHeight = '150px';
+                    rawContainer.style.overflowY = 'auto';
+                    
+                    const title = document.createElement('div');
+                    title.style.fontWeight = 'bold';
+                    title.style.marginBottom = '5px';
+                    title.style.color = 'var(--text-muted)';
+                    title.textContent = "Raw Extracted Text:";
+                    
+                    rawContainer.appendChild(title);
+                    rawContainer.appendChild(document.createTextNode(metadata.raw_text.trim()));
+                    
+                    dataCard.appendChild(rawContainer);
+                }
+
                 splitContainer.appendChild(dataCard);
             } else {
                 // Expand images portion to take full width if no data card
