@@ -3,4 +3,4 @@ uvicorn
 python-multipart
 PyMuPDF
 Pillow
-pytesseract
+paddleocr
