@@ -44,19 +44,7 @@ except ImportError:
 # ── Page Metadata Extractor (Spatial OCR) ──────────────────────────────────
 
 class PageMetadataExtractor:
-    """Renders PDF pages and uses spatial OCR to match text to individual tiles."""
-
-    SIZE_RE    = re.compile(r'(\d{3,4})\s*[xXxX×]\s*[lI]?(\d{3,4})\s*(mm|cm)?', re.I)
-    THICK_RE   = re.compile(r'(\d{1,2}(?:\.\d)?)\s*mm', re.I)
-    FACES_RE   = re.compile(r'(\d+)\s*(?:faces?)\b', re.I)
-
-    KNOWN_SURFACES = [
-        'full polished', 'hd polished', 'full polish',
-        'impression', 'matt', 'matte', 'glossy', 'gloss',
-        'satin', 'natural', 'lappato', 'structured',
-        'rustic', 'hd gloss', 'sugar', 'carving',
-        'soft polished', 'anti-skid',
-    ]
+    """Renders PDF pages and extracts raw text metadata."""
 
     def __init__(self):
         self._current_page_data = None
@@ -120,75 +108,18 @@ class PageMetadataExtractor:
         self._current_pno = pno
 
     def extract_page_meta(self, doc, pno: int) -> dict:
-        """Extract all unique Names, Sizes, and Surfaces from the entire page."""
+        """Extract all text from the entire page."""
         self.prepare_page(doc, pno)
-        if not self._current_page_data:
-            return {"products": []}
         
-        all_lines = self._get_lines_with_bbox(self._current_page_data)
+        raw_text = doc[pno].get_text("text").strip()
         
-        all_names = []
-        all_sizes = []
-        all_surfaces = []
+        # If native text is empty, but we have OCR data, build the text from OCR words
+        if not raw_text and self._current_page_data:
+            # We already have self._get_lines_with_bbox which groups words into lines
+            all_lines = self._get_lines_with_bbox(self._current_page_data)
+            raw_text = "\n".join([text for text, _ in all_lines]).strip()
         
-        for text, _ in all_lines:
-            clean = text.strip()
-            low = clean.lower()
-            
-            # 1. Size
-            m_s = self.SIZE_RE.search(clean)
-            if m_s:
-                w, h, u = m_s.group(1), m_s.group(2).replace('I','1').replace('l','1'), (m_s.group(3) or 'mm')
-                size_str = f"{w}x{h}{u}"
-                if size_str not in all_sizes: all_sizes.append(size_str)
-                continue
-
-            # 2. Surface
-            found_sf = None
-            for sf in self.KNOWN_SURFACES:
-                if sf in low:
-                    surf = sf.title()
-                    if surf not in all_surfaces: all_surfaces.append(surf)
-                    break
-            if found_sf: continue
-
-            # 3. Name (Product Title)
-            temp_clean = clean
-            for prefix in ["Wall & Floor:", "Wall:", "Floor:", "Wall & Floor :", "Product:"]:
-                if temp_clean.lower().startswith(prefix.lower()):
-                    temp_clean = temp_clean[len(prefix):].strip()
-                    break
-            
-            upper_only = "".join(c for c in temp_clean if c.isupper())
-            if len(temp_clean) > 4 and len(upper_only) >= 4 and len(upper_only) / len(temp_clean) > 0.5:
-                name = temp_clean.title()
-                if name not in all_names: all_names.append(name)
-
-        # 4. Also use the "Super-Greedy" Fallback on the raw text to ensure nothing is missed
-        raw_text = doc[pno].get_text()
-        found_sizes = self.SIZE_RE.findall(raw_text)
-        for s in found_sizes:
-            size_str = f"{s[0]}x{s[1]}{s[2] or 'mm'}"
-            if size_str not in all_sizes: all_sizes.append(size_str)
-            
-        low_text = raw_text.lower()
-        for sf in self.KNOWN_SURFACES:
-            if sf in low_text:
-                surf = sf.title()
-                if surf not in all_surfaces: all_surfaces.append(surf)
-
-        # 5. Return a single aggregated product for the page, plus the raw text
-        if all_names or all_sizes or all_surfaces:
-            return {
-                "products": [{
-                    "name": "<br>".join(all_names) if all_names else "-",
-                    "size": "<br>".join(all_sizes) if all_sizes else "-",
-                    "surface": "<br>".join(all_surfaces) if all_surfaces else "-"
-                }],
-                "raw_text": raw_text
-            }
-
-        return {"products": [], "raw_text": raw_text}
+        return {"raw_text": raw_text}
 
     def _get_lines_with_bbox(self, words):
         if not words: return []
