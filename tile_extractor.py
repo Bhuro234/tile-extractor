@@ -36,11 +36,15 @@ except ImportError:
 try:
     import pytesseract
     # Tesseract Path Configuration
-    TESS_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    if os.path.exists(TESS_PATH):
-        pytesseract.pytesseract.tesseract_cmd = TESS_PATH
+    TESS_PATH_WIN = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    TESS_PATH_LINUX = '/usr/bin/tesseract'
+    
+    if os.path.exists(TESS_PATH_WIN):
+        pytesseract.pytesseract.tesseract_cmd = TESS_PATH_WIN
+    elif os.path.exists(TESS_PATH_LINUX):
+        pytesseract.pytesseract.tesseract_cmd = TESS_PATH_LINUX
     else:
-        # Assume it's in PATH (Linux/Render)
+        # Default fallback
         pytesseract.pytesseract.tesseract_cmd = 'tesseract'
 
     HAS_OCR = True
