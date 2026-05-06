@@ -189,6 +189,26 @@ class PageMetadataExtractor:
         if current_product["name"] or current_product["size"] or current_product["surface"]:
             products.append(current_product)
 
+        # 4. "Super-Greedy" Fallback: If still no products found, search the entire raw text
+        if not products:
+            raw_text = doc[pno].get_text()
+            found_sizes = self.SIZE_RE.findall(raw_text)
+            found_surfaces = []
+            low_text = raw_text.lower()
+            for sf in self.KNOWN_SURFACES:
+                if sf in low_text:
+                    found_surfaces.append(sf.title())
+            
+            # If we found any sizes or surfaces, create a "General" product entry
+            if found_sizes or found_surfaces:
+                size_str = ", ".join([f"{s[0]}x{s[1]}{s[2] or 'mm'}" for s in found_sizes])
+                surf_str = ", ".join(list(set(found_surfaces)))
+                products.append({
+                    "name": "Catalogue Specs",
+                    "size": size_str or "-",
+                    "surface": surf_str or "-"
+                })
+
         # Deduplicate
         final_products = []
         seen = set()
