@@ -1,0 +1,5 @@
+C:\Users\somya\.gemini\antigravity\scratch\TileExtractor\test_paddle.py:10: DeprecationWarning: The parameter `use_angle_cls` has been deprecated and will be removed in the future. Please use `use_textline_orientation` instead.
+  ocr_model = PaddleOCR(use_angle_cls=False, lang='en')
+[32mCreating model: ('PP-LCNet_x1_0_doc_ori', None, None)[0m
+[32mModel files already exist. Using cached files. To redownload, please delete the directory manually: `C:\Users\somya\.paddlex\official_models\PP-LCNet_x1_0_doc_ori`.[0m
+Error: Engine 'paddle_static' is unavailable because dependency 'paddlepaddle' is not installed.

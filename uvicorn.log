@@ -1,0 +1,14 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\somya\\.gemini\\antigravity\\scratch\\TileExtractor']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [15124] using StatReload
+INFO:     Started server process [17844]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'test_fitz.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [17844]
+INFO:     Started server process [3340]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.

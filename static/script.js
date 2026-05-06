@@ -329,8 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             imagesCard.appendChild(grid);
-
-            imagesCard.appendChild(grid);
             splitContainer.appendChild(imagesCard);
 
             // --- Portion 2: Data Card --- (If raw text exists)

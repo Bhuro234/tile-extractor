@@ -76,7 +76,7 @@ class PageMetadataExtractor:
             try:
                 global ocr_model
                 if ocr_model is None:
-                    ocr_model = PaddleOCR(use_angle_cls=False, lang='en', show_log=False)
+                    ocr_model = PaddleOCR(use_angle_cls=False, lang='en')
                 
                 page = doc[pno]
                 mat = fitz.Matrix(2, 2)
