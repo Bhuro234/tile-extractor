@@ -1,12 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.9-bullseye
 
-# Install Tesseract and system dependencies
+# Install Tesseract and essential dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
     libgl1-mesa-glx \
-    ghostscript \
-    python3-tk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
