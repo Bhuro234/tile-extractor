@@ -86,7 +86,7 @@ class PageMetadataExtractor:
         try:
             page = doc[pno]
             raw_words = page.get_text("words") # x0, y0, x1, y1, word, block_no, line_no, word_no
-            if len(raw_words) > 10: # If we found a decent amount of text, skip OCR
+            if len(raw_words) > 0: # If we found ANY text, use it
                 words = []
                 for w in raw_words:
                     words.append({
