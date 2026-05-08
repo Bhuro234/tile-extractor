@@ -3,5 +3,3 @@ uvicorn
 python-multipart
 PyMuPDF
 Pillow
-paddleocr
-paddlepaddle
