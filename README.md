@@ -83,11 +83,6 @@ tile-extractor/
 └── jobs/                # Auto-generated; stores extracted tiles per session
 ```
 
----
-
-
-
----
 
 ## 📖 How It Works
 
