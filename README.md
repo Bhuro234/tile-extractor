@@ -85,14 +85,7 @@ tile-extractor/
 
 ---
 
-## 🌐 Deployment (Render)
 
-1. Push this repository to GitHub
-2. Go to [Render](https://render.com/) → **New Web Service**
-3. Connect your GitHub repo and use these settings:
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn app:app --host 0.0.0.0 --port $PORT`
-   - **Runtime:** Python 3
 
 ---
 
