@@ -18,12 +18,13 @@ JOBS_DIR.mkdir(exist_ok=True)
 PROGRESS_STATE = {}
 
 def run_extraction_task(job_id: str, pdf_path: str, output_dir: str):
+    print(f"INFO: Starting extraction for job {job_id}")
     PROGRESS_STATE[job_id] = {"status": "processing", "current": 0, "total": 0, "percentage": 0}
     try:
         extractor = TileCatalogueExtractor(
             pdf_path=pdf_path,
             output_dir=output_dir,
-            verbose=False
+            verbose=True
         )
         def progress_cb(current, total):
             PROGRESS_STATE[job_id]["percentage"] = current
@@ -32,7 +33,9 @@ def run_extraction_task(job_id: str, pdf_path: str, output_dir: str):
         extractor.extract_images(progress_callback=progress_cb)
         PROGRESS_STATE[job_id]["status"] = "completed"
         PROGRESS_STATE[job_id]["percentage"] = 100
+        print(f"INFO: Completed extraction for job {job_id}")
     except Exception as e:
+        print(f"ERROR: Job {job_id} failed: {e}")
         PROGRESS_STATE[job_id]["status"] = "error"
         PROGRESS_STATE[job_id]["error"] = str(e)
 
@@ -91,7 +94,7 @@ async def get_results(job_id: str):
 
 @app.get("/api/images/{job_id}/{filename}")
 async def get_image(job_id: str, filename: str):
-    image_path = JOBS_DIR / job_id / "output" / filename
+    image_path = (JOBS_DIR / job_id / "output" / filename).absolute()
     if not image_path.exists():
         raise HTTPException(status_code=404, detail="Image not found")
     return FileResponse(image_path)
