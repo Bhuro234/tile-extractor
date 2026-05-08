@@ -36,25 +36,6 @@ def run_extraction_task(job_id: str, pdf_path: str, output_dir: str):
         PROGRESS_STATE[job_id]["status"] = "error"
         PROGRESS_STATE[job_id]["error"] = str(e)
 
-def run_scan_task(job_id: str, pdf_path: str, output_dir: str):
-    PROGRESS_STATE[job_id] = {"status": "scanning", "current": 0, "total": 0, "percentage": 0}
-    try:
-        extractor = TileCatalogueExtractor(
-            pdf_path=pdf_path,
-            output_dir=output_dir,
-            verbose=False
-        )
-        def progress_cb(current, total):
-            PROGRESS_STATE[job_id]["percentage"] = current
-            PROGRESS_STATE[job_id]["total"] = total
-                
-        extractor.scan_metadata(progress_callback=progress_cb)
-        PROGRESS_STATE[job_id]["status"] = "scan_completed"
-        PROGRESS_STATE[job_id]["percentage"] = 100
-    except Exception as e:
-        PROGRESS_STATE[job_id]["status"] = "error"
-        PROGRESS_STATE[job_id]["error"] = str(e)
-
 @app.post("/api/upload")
 async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     if not file.filename.lower().endswith(".pdf"):
@@ -75,42 +56,19 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
         
     return {"job_id": job_id, "message": "Extraction started."}
 
-@app.post("/api/scan/{job_id}")
-async def scan_data(job_id: str, background_tasks: BackgroundTasks):
-    job_dir = JOBS_DIR / job_id
-    if not job_dir.exists():
-        raise HTTPException(status_code=404, detail="Job not found")
-        
-    pdf_files = list(job_dir.glob("*.pdf"))
-    if not pdf_files:
-        raise HTTPException(status_code=404, detail="PDF not found for job")
-        
-    pdf_path = pdf_files[0]
-    output_dir = job_dir / "output"
-    
-    background_tasks.add_task(run_scan_task, job_id, str(pdf_path), str(output_dir))
-    
-    return {"job_id": job_id, "message": "Scanning started."}
-
-
 @app.get("/api/progress/{job_id}")
 async def get_progress(job_id: str):
     if job_id not in PROGRESS_STATE:
         return {"status": "unknown"}
-    
-    from tile_extractor import HAS_OCR
-    state = PROGRESS_STATE[job_id].copy()
-    state["ocr_enabled"] = HAS_OCR
-    return state
+    return PROGRESS_STATE[job_id]
 
 @app.get("/api/results/{job_id}")
 async def get_results(job_id: str):
     job_dir = JOBS_DIR / job_id
-    csv_path = job_dir / "output" / "tiles_report.csv"
-    meta_path = job_dir / "output" / "pages_metadata.json"
+    csv_path = job_dir / "output" / "tiles.csv"
 
     if not csv_path.exists():
-        return JSONResponse(status_code=404, content={"error": "Results not ready yet. Still writing files..."})
+        return JSONResponse(status_code=404, content={"error": "Results not ready yet."})
 
     # Load images from CSV
     images_by_page = {}
@@ -120,28 +78,16 @@ async def get_results(job_id: str):
             pno = row["page"]
             images_by_page.setdefault(pno, []).append(row)
 
-    # Load page metadata if available
-    page_meta = {}
-    if meta_path.exists():
-        with open(meta_path, "r", encoding="utf-8") as f:
-            page_meta = json.load(f)
-
     # Build page-grouped response
-    # Get all page numbers that have data (images or meta)
-    all_pnos = set(images_by_page.keys()) | set(page_meta.keys())
-    
     pages = []
-    for pno in sorted(all_pnos, key=lambda x: int(x)):
-        meta = page_meta.get(str(pno), {})
-        images = images_by_page.get(str(pno), [])
+    for pno in sorted(images_by_page.keys(), key=lambda x: int(x)):
+        images = images_by_page.get(pno, [])
         pages.append({
             "page": int(pno),
-            "metadata": meta,
             "images": images
         })
 
-    return {"pages": pages}
-
+    return {"job_id": job_id, "pages": pages}
 
 @app.get("/api/images/{job_id}/{filename}")
 async def get_image(job_id: str, filename: str):
@@ -154,21 +100,12 @@ async def get_image(job_id: str, filename: str):
 async def download_all(job_id: str):
     job_dir = JOBS_DIR / job_id
     output_dir = job_dir / "output"
-    
-    if not output_dir.exists():
-        raise HTTPException(status_code=404, detail="No output found")
-        
-    zip_path = job_dir / f"{job_id}.zip"
-    
-    if not zip_path.exists():
-        shutil.make_archive(str(job_dir / job_id), 'zip', str(output_dir))
-        
-    return FileResponse(
-        path=zip_path, 
-        media_type="application/zip", 
-        filename="extracted_tiles.zip",
-        headers={"Content-Disposition": 'attachment; filename="extracted_tiles.zip"'}
-    )
+    zip_filename = f"tiles_{job_id}"
+    zip_path = shutil.make_archive(str(job_dir / zip_filename), 'zip', str(output_dir))
+    return FileResponse(zip_path, filename=f"extracted_tiles.zip")
 
-# Serve static files
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,16 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const dropZone = document.getElementById('drop-zone');
+    const uploadForm = document.getElementById('upload-form');
     const fileInput = document.getElementById('file-input');
+    const dropZone = document.getElementById('drop-zone');
     const uploadSection = document.getElementById('upload-section');
     const loadingSection = document.getElementById('loading-section');
     const resultsSection = document.getElementById('results-section');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
     const gallery = document.getElementById('gallery');
     const statCount = document.getElementById('stat-count');
+    const downloadAllBtn = document.getElementById('download-all-btn');
 
-    // Lightbox elements
+    // Lightbox Elements
     const lightbox = document.getElementById('lightbox');
-    const lbClose = document.querySelector('.close-btn');
-    const lbImg = document.getElementById('lightbox-img');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeBtn = document.querySelector('.close-btn');
     const lbFilename = document.getElementById('lb-filename');
     const lbDims = document.getElementById('lb-dims');
     const lbSize = document.getElementById('lb-size');
@@ -18,412 +22,180 @@ document.addEventListener('DOMContentLoaded', () => {
     const lbPage = document.getElementById('lb-page');
     const lbDownload = document.getElementById('lb-download');
 
-    // Drag and Drop Logic
-    dropZone.addEventListener('click', () => fileInput.click());
+    let currentJobId = null;
 
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    // --- Helpers ---
+    
+    function formatBytes(bytes, decimals = 2) {
+        if (!bytes || bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-    });
-
-    dropZone.addEventListener('drop', handleDrop, false);
-    fileInput.addEventListener('change', function() {
-        if (this.files.length) handleFiles(this.files);
-    });
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles(files);
-    }
-
-    function handleFiles(files) {
-        const file = files[0];
-        if (file && file.type === 'application/pdf') {
-            uploadPDF(file);
-        } else {
-            alert('Please upload a valid PDF catalogue.');
+    // --- Upload Logic ---
+    
+    async function handleUpload(file) {
+        if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+            alert('Please select a valid PDF file.');
+            return;
         }
-    }
 
-    // API Interaction
-    async function uploadPDF(file) {
         const formData = new FormData();
         formData.append('file', file);
 
-        // UI transitions
         uploadSection.classList.add('hidden');
         loadingSection.classList.remove('hidden');
-        
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
-        const loadingStatus = document.getElementById('loading-status');
-        
         progressFill.style.width = '0%';
         progressText.textContent = '0%';
-        loadingStatus.textContent = 'Extracting Tiles...';
 
         try {
             const response = await fetch('/api/upload', {
                 method: 'POST',
                 body: formData
             });
-            
-            if (!response.ok) throw new Error('Upload or extraction failed.');
-            
             const data = await response.json();
-            pollProgress(data.job_id);
-            
+            currentJobId = data.job_id;
+            pollProgress(currentJobId);
         } catch (error) {
-            console.error(error);
-            alert('Error processing file. Please try again.');
-            loadingSection.classList.add('hidden');
+            alert('Upload failed: ' + error);
             uploadSection.classList.remove('hidden');
+            loadingSection.classList.add('hidden');
         }
     }
 
-    async function pollProgress(jobId) {
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
-        const timerText = document.getElementById('timer-text');
-        
-        let timerInterval = null;
-        let secondsLeft = 0;
-        let timerStarted = false;
+    // Click to upload
+    dropZone.addEventListener('click', () => fileInput.click());
 
+    // Auto-submit on file choice
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            handleUpload(fileInput.files[0]);
+        }
+    });
+
+    // Drag & Drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-active');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-active');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-active');
+        if (e.dataTransfer.files.length > 0) {
+            handleUpload(e.dataTransfer.files[0]);
+        }
+    });
+
+    // --- Polling & Results ---
+
+    function pollProgress(jobId) {
         const interval = setInterval(async () => {
             try {
-                const res = await fetch(`/api/progress/${jobId}`);
-                const data = await res.json();
-                
-                if (data.status === 'error') {
+                const response = await fetch(`/api/progress/${jobId}`);
+                const data = await response.json();
+
+                if (data.status === 'completed') {
                     clearInterval(interval);
-                    if(timerInterval) clearInterval(timerInterval);
-                    alert('Error during extraction: ' + data.error);
-                    loadingSection.classList.add('hidden');
+                    fetchResults(jobId);
+                } else if (data.status === 'error') {
+                    clearInterval(interval);
+                    alert('Error: ' + data.error);
                     uploadSection.classList.remove('hidden');
-                    return;
-                }
-                
-                if (data.percentage !== undefined) {
+                    loadingSection.classList.add('hidden');
+                } else if (data.status === 'unknown') {
+                    clearInterval(interval);
+                    alert('Session lost due to server update. Please re-upload.');
+                    uploadSection.classList.remove('hidden');
+                    loadingSection.classList.add('hidden');
+                } else {
                     progressFill.style.width = `${data.percentage}%`;
                     progressText.textContent = `${data.percentage}%`;
                 }
-
-                // Start timer once we know the total pages
-                if (data.total && !timerStarted) {
-                    timerStarted = true;
-
-                    // Check if OCR is actually working on the server
-                    if (data.ocr_enabled === false) {
-                        console.warn("Fallback OCR engine is offline.");
-                        document.getElementById('loading-status').textContent = "Scanning (Fallback OCR Offline)";
-                    }
-
-                    // Estimate: 5s per page on average * 1.5 safety factor
-                    secondsLeft = Math.ceil(data.total * 5 * 1.5);
-                    
-                    timerInterval = setInterval(() => {
-                        if (secondsLeft > 0) {
-                            secondsLeft--;
-                            const mins = Math.floor(secondsLeft / 60);
-                            const secs = secondsLeft % 60;
-                            timerText.textContent = `${mins}m ${secs}s`;
-                        }
-                    }, 1000);
-                }
-                
-                if (data.status === 'completed') {
-                    clearInterval(interval);
-                    if(timerInterval) clearInterval(timerInterval);
-                    timerText.textContent = "Finalizing Images...";
-                    progressFill.style.width = '100%';
-                    progressText.textContent = '100%';
-                    document.getElementById('loading-status').textContent = 'Loading Image Results...';
-                    setTimeout(() => {
-                        fetchResults(jobId);
-                    }, 600);
-                }
-
-                if (data.status === 'scan_completed') {
-                    clearInterval(interval);
-                    if(timerInterval) clearInterval(timerInterval);
-                    timerText.textContent = "Finalizing Metadata...";
-                    progressFill.style.width = '100%';
-                    progressText.textContent = '100%';
-                    document.getElementById('loading-status').textContent = 'Loading Scan Results...';
-                    setTimeout(() => {
-                        fetchResults(jobId);
-                    }, 600);
-                }
-            } catch (err) {
-                console.error("Polling error", err);
+            } catch (error) {
+                console.error('Polling error:', error);
             }
-        }, 500);
+        }, 1000);
     }
 
-    async function fetchResults(jobId, attempt = 0) {
-        const MAX_ATTEMPTS = 30;
+    async function fetchResults(jobId) {
         try {
-            const res = await fetch(`/api/results/${jobId}`);
-            if (!res.ok) throw new Error(`Server error: ${res.status}`);
-            const data = await res.json();
-
-            if (!data.pages) throw new Error('No pages data in response.');
-
+            const response = await fetch(`/api/results/${jobId}`);
+            const data = await response.json();
             renderGallery(data.pages, jobId);
-
+            
             loadingSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
-        } catch (error) {
-            console.error(`Fetch attempt ${attempt + 1} failed:`, error);
-            if (attempt < MAX_ATTEMPTS) {
-                // Exponential backoff or just wait longer
-                const delay = attempt < 10 ? 1000 : 2000;
-                setTimeout(() => fetchResults(jobId, attempt + 1), delay);
-            } else {
-                alert(`Error loading results: ${error.message}\nThis usually happens if the catalogue is very large. Try refreshing the page once the processing hit 100%.`);
-                loadingSection.classList.add('hidden');
-                uploadSection.classList.remove('hidden');
-            }
-        }
-    }
-
-    async function triggerScanData(jobId) {
-        try {
-            resultsSection.classList.add('hidden');
-            loadingSection.classList.remove('hidden');
             
-            const progressFill = document.getElementById('progress-fill');
-            const progressText = document.getElementById('progress-text');
-            const loadingStatus = document.getElementById('loading-status');
+            let totalTiles = 0;
+            data.pages.forEach(p => totalTiles += p.images.length);
+            statCount.textContent = totalTiles;
             
-            progressFill.style.width = '0%';
-            progressText.textContent = '0%';
-            loadingStatus.textContent = 'Scanning Metadata...';
-            document.getElementById('timer-text').textContent = 'calculating...';
-
-            const res = await fetch(`/api/scan/${jobId}`, { method: 'POST' });
-            if (!res.ok) throw new Error('Failed to start scanning');
-            
-            pollProgress(jobId);
-        } catch (error) {
-            console.error(error);
-            alert('Failed to start metadata scan.');
-            loadingSection.classList.add('hidden');
-            resultsSection.classList.remove('hidden');
-        }
-    }
-
-    // Rendering — page-grouped layout with metadata cards
-    function renderGallery(pages, jobId) {
-        gallery.innerHTML = '';
-
-        // Count total tiles
-        const totalTiles = pages.reduce((sum, p) => sum + p.images.length, 0);
-        statCount.textContent = totalTiles;
-
-        const downloadAllBtn = document.getElementById('download-all-btn');
-
-        if (totalTiles === 0) {
-            gallery.innerHTML = '<p style="text-align:center;color:var(--text-muted)">No tiles found in this document.</p>';
-            if (downloadAllBtn) downloadAllBtn.style.display = 'none';
-            return;
-        }
-
-        if (downloadAllBtn) {
             downloadAllBtn.href = `/api/download/${jobId}`;
             downloadAllBtn.style.display = 'inline-flex';
+        } catch (error) {
+            alert('Failed to fetch results: ' + error);
         }
+    }
 
-        const scanDataBtn = document.getElementById('scan-data-btn');
-        let hasScannedData = false;
+    function renderGallery(pages, jobId) {
+        gallery.innerHTML = '';
         
-        // Check if any page has raw text
         pages.forEach(pageData => {
-            if (pageData.metadata && pageData.metadata.raw_text && pageData.metadata.raw_text.trim().length > 0) {
-                hasScannedData = true;
-            }
-        });
-
-        if (scanDataBtn) {
-            if (hasScannedData) {
-                scanDataBtn.style.display = 'none'; // Hide if already scanned
-            } else {
-                scanDataBtn.style.display = 'inline-flex';
-                // Remove old listeners to prevent duplicates
-                const newScanBtn = scanDataBtn.cloneNode(true);
-                scanDataBtn.parentNode.replaceChild(newScanBtn, scanDataBtn);
-                
-                newScanBtn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    await triggerScanData(jobId);
-                });
-            }
-        }
-
-        let imgIndex = 0;
-
-        pages.forEach(pageData => {
-            const { page, metadata, images } = pageData;
-
-            // Page group wrapper
             const group = document.createElement('div');
             group.className = 'page-group';
-
-            // Page label
-            const pageLabel = document.createElement('div');
-            pageLabel.className = 'page-label';
-            pageLabel.textContent = `Page ${page}`;
-            group.appendChild(pageLabel);
-
-            // Split Container for Images and Data
-            const splitContainer = document.createElement('div');
-            splitContainer.className = 'split-container';
-
-            // --- Portion 1: Images Card ---
-            const imagesCard = document.createElement('div');
-            imagesCard.className = 'portion-card images-portion';
-            imagesCard.innerHTML = `<div class="portion-title">Images</div>`;
+            group.innerHTML = `<div class="page-number">Page ${pageData.page}</div>`;
             
             const grid = document.createElement('div');
             grid.className = 'masonry-grid';
-
-            images.forEach(imgData => {
-                const imgUrl = `/api/images/${jobId}/${imgData.filename}`;
-                const card = document.createElement('div');
-                card.className = 'tile-card';
-                card.style.animationDelay = `${imgIndex * 0.04}s`;
-                imgIndex++;
-
-                const img = document.createElement('img');
-                img.src = imgUrl;
-                img.alt = imgData.filename;
-                img.onload = () => {
-                    const rowHeight = 20, gap = 20;
-                    const height = img.naturalHeight * (card.clientWidth / img.naturalWidth);
-                    const rowSpan = Math.ceil((height + gap) / (rowHeight + gap)) + 3;
-                    card.style.gridRowEnd = `span ${rowSpan}`;
-                };
-
-                const overlay = document.createElement('div');
-                overlay.className = 'tile-overlay';
-                overlay.innerHTML = `<p>${imgData.name || 'Tile'}</p>`;
-
-                card.appendChild(img);
-                card.appendChild(overlay);
-                card.addEventListener('click', () => openLightbox(imgUrl, imgData));
-                grid.appendChild(card);
+            
+            pageData.images.forEach(img => {
+                const item = document.createElement('div');
+                item.className = 'tile-card';
+                
+                const imgSrc = `/api/images/${jobId}/${img.filename}`;
+                item.innerHTML = `
+                    <img src="${imgSrc}" alt="Tile" loading="lazy">
+                    <div class="tile-overlay">
+                        <p>Tile Image</p>
+                        <p class="dim">${img.width} x ${img.height} px</p>
+                    </div>
+                `;
+                
+                item.addEventListener('click', () => {
+                    openLightbox(img, jobId);
+                });
+                
+                grid.appendChild(item);
             });
             
-            imagesCard.appendChild(grid);
-            splitContainer.appendChild(imagesCard);
-
-            // --- Portion 2: Data Card --- (If raw text exists)
-            const hasRawText = metadata && metadata.raw_text && metadata.raw_text.trim().length > 0;
-
-            if (hasRawText) {
-                const dataCard = document.createElement('div');
-                dataCard.className = 'portion-card data-portion';
-                dataCard.innerHTML = `<div class="portion-title">Text Data</div>`;
-
-                const rawContainer = document.createElement('div');
-                rawContainer.style.marginTop = '15px';
-                rawContainer.style.padding = '10px';
-                rawContainer.style.backgroundColor = 'rgba(255,255,255,0.05)';
-                rawContainer.style.borderRadius = '8px';
-                rawContainer.style.fontSize = '0.9rem';
-                rawContainer.style.color = 'var(--text-color)';
-                rawContainer.style.whiteSpace = 'pre-wrap';
-                rawContainer.style.maxHeight = '300px';
-                rawContainer.style.overflowY = 'auto';
-                
-                rawContainer.appendChild(document.createTextNode(metadata.raw_text.trim()));
-                dataCard.appendChild(rawContainer);
-
-                splitContainer.appendChild(dataCard);
-            } else {
-                // Expand images portion to take full width if no data card
-                imagesCard.style.flex = "1";
-                imagesCard.style.minWidth = "100%";
-            }
-
-            group.appendChild(splitContainer);
-            
+            group.appendChild(grid);
             gallery.appendChild(group);
         });
     }
 
-
-    // Lightbox Logic
-    function openLightbox(url, data) {
-        lbImg.src = url;
-        lbFilename.textContent = data.name || data.filename;
-        lbDims.textContent = `${data.width_px} x ${data.height_px}`;
-        lbPage.textContent = data.page;
-        lbDownload.href = url;
-
-        // Dynamic Info Grid for Lightbox
-        const infoGrid = document.querySelector('.info-grid');
+    function openLightbox(img, jobId) {
+        lightboxImg.src = `/api/images/${jobId}/${img.filename}`;
+        lbFilename.textContent = img.filename;
+        lbDims.textContent = `${img.width} x ${img.height} px`;
+        lbSize.textContent = formatBytes(parseInt(img.size));
+        lbFormat.textContent = img.format || 'N/A';
+        lbPage.textContent = img.page;
+        lbDownload.href = `/api/images/${jobId}/${img.filename}`;
+        lbDownload.setAttribute('download', img.filename);
         
-        const formatBytes = (bytes) => {
-            if (!bytes) return '-';
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1048576).toFixed(1) + ' MB';
-        };
-
-        infoGrid.innerHTML = `
-            <div class="info-item"><span class="label">Dimensions</span><span class="value">${data.width_px} x ${data.height_px} px</span></div>
-            <div class="info-item"><span class="label">File Size</span><span class="value">${formatBytes(data.size_bytes)}</span></div>
-        `;
-
-        const fields = [
-            { key: 'size',      label: 'Size' },
-            { key: 'surface',   label: 'Surface' },
-            { key: 'thickness', label: 'Thickness' },
-            { key: 'faces',     label: 'Faces' }
-        ];
-
-        fields.forEach(({ key, label }) => {
-            if (data[key]) {
-                const item = document.createElement('div');
-                item.className = 'info-item';
-                item.innerHTML = `<span class="label">${label}</span><span class="value">${data[key]}</span>`;
-                infoGrid.appendChild(item);
-            }
-        });
-
         lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
     }
 
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-        setTimeout(() => { lbImg.src = ''; }, 400); // clear after transition
-    }
-
-    lbClose.addEventListener('click', closeLightbox);
+    closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
     lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
-    });
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-            closeLightbox();
-        }
+        if (e.target === lightbox) lightbox.classList.remove('active');
     });
 });
