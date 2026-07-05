@@ -4,8 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tile Image Extraction</title>
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* INLINE STYLES TO BYPASS CACHE */
+        .ocr-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            gap: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .toggle-switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider {
+            background-color: #6366f1;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+        .toggle-label {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .toggle-title {
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .toggle-desc {
+            font-size: 0.8rem;
+            color: #475569;
+        }
+        .badge-ocr {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f97316;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 12px;
+            z-index: 5;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        /* Sample Files Section (Top Right) Inline Styles */
+        .top-samples {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+        .top-samples span {
+            font-size: 0.9rem;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+        .top-samples-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .sample-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            color: #334155;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .sample-btn:hover {
+            background: white;
+            color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        @media (max-width: 768px) {
+            .top-samples {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="marble-background"></div>
@@ -19,9 +149,26 @@
                 <span class="benefit-badge"><i class="fa-solid fa-gem"></i> Lossless Quality</span>
                 <span class="benefit-badge"><i class="fa-solid fa-box-archive"></i> Bulk Download</span>
             </div>
+            
+            <a href="engine.html" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem; padding: 0.5rem 1.5rem; border-radius: 20px; background: rgba(99, 102, 241, 0.1); color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(99, 102, 241, 0.3); transition: all 0.3s;">
+                <i class="fa-solid fa-microchip"></i> View Engine Architecture
+            </a>
         </header>
 
         <main>
+            <!-- Sample Files sitting directly above the card -->
+            <div class="top-samples">
+                <span>Try sample files:</span>
+                <div class="top-samples-links">
+                    <a href="/samples/Durastone-AP.pdf" download class="sample-btn">
+                        <i class="fa-solid fa-file-pdf"></i> Durastone
+                    </a>
+                    <a href="/samples/ITALMARMI.pdf" download class="sample-btn">
+                        <i class="fa-solid fa-file-pdf"></i> Italmarmi
+                    </a>
+                </div>
+            </div>
+
             <section id="upload-section" class="glass-panel">
                 <div id="drop-zone" class="drop-zone">
                     <div class="icon-container">
@@ -31,6 +178,18 @@
                     <p>or click to browse files</p>
                     <input type="file" id="file-input" accept="application/pdf" hidden>
                 </div>
+                
+                <div class="ocr-toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="ocr-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <div class="toggle-label">
+                        <span class="toggle-title">Apply OCR</span>
+                        <span class="toggle-desc">Force extract tiles from flat/scanned catalogues using boundaries</span>
+                    </div>
+                </div>
+
                 <div class="upload-notes">
                     <p class="note-highlight"><i class="fa-solid fa-triangle-exclamation"></i> For large PDF catalogues, please use the <b>local version</b>. The free deployment tier is limited to <b>512 MB RAM</b> and may crash on very heavy files.</p>
                     <p><i class="fa-solid fa-bolt"></i> For lightning speed, use this locally on your machine.</p>
@@ -72,7 +231,8 @@
             <p class="footer-main">Built by Somya Bhalani</p>
             <div class="footer-links">
                 <a href="https://github.com/somyabhalani" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
-                <a href="tel:8320408204"><i class="fa-solid fa-phone"></i> 8320408204</a>
+                <a href="mailto:somyabhalani@gmail.com"><i class="fa-solid fa-envelope"></i> somyabhalani@gmail.com</a>
+                <a href="tel:+918320408204"><i class="fa-solid fa-phone"></i> 8320408204</a>
             </div>
             <p class="footer-rights">&copy; 2026 All Rights Reserved.</p>
         </footer>
@@ -110,6 +270,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=4"></script>
 </body>
 </html>

@@ -100,7 +100,7 @@ tile-extractor/
 
 **Somya Bhalani**
 - GitHub: [@somyabhalani](https://github.com/somyabhalani)
-- Phone: +91 8320408204
+- Email: somyabhalani@gmail.com
 
 ---
 

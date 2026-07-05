@@ -43,8 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const ocrToggle = document.getElementById('ocr-toggle');
+        
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('apply_ocr', ocrToggle.checked);
 
         uploadSection.classList.add('hidden');
         loadingSection.classList.remove('hidden');
@@ -161,7 +164,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.className = 'tile-card';
                 
                 const imgSrc = `/api/images/${jobId}/${img.filename}`;
+                
+                let badgeHtml = '';
+                if (img.method === 'OCR') {
+                    badgeHtml = `<span class="ocr-badge"><i class="fa-solid fa-camera"></i> OCR</span>`;
+                }
+                
                 item.innerHTML = `
+                    ${badgeHtml}
                     <img src="${imgSrc}" alt="Tile" loading="lazy">
                     <div class="tile-overlay">
                         <p>Tile Image</p>

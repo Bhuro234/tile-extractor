@@ -4,7 +4,7 @@ import json
 import shutil
 import uuid
 from pathlib import Path
-from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 
@@ -17,14 +17,15 @@ JOBS_DIR.mkdir(exist_ok=True)
 
 PROGRESS_STATE = {}
 
-def run_extraction_task(job_id: str, pdf_path: str, output_dir: str):
-    print(f"INFO: Starting extraction for job {job_id}")
+def run_extraction_task(job_id: str, pdf_path: str, output_dir: str, apply_ocr: bool = False):
+    print(f"INFO: Starting extraction for job {job_id} (OCR={apply_ocr})")
     PROGRESS_STATE[job_id] = {"status": "processing", "current": 0, "total": 0, "percentage": 0}
     try:
         extractor = TileCatalogueExtractor(
             pdf_path=pdf_path,
             output_dir=output_dir,
-            verbose=True
+            verbose=True,
+            apply_ocr=apply_ocr
         )
         def progress_cb(current, total):
             PROGRESS_STATE[job_id]["percentage"] = current
@@ -40,7 +41,7 @@ def run_extraction_task(job_id: str, pdf_path: str, output_dir: str):
         PROGRESS_STATE[job_id]["error"] = str(e)
 
 @app.post("/api/upload")
-async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(...), apply_ocr: str = Form("false")):
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
 
@@ -55,7 +56,8 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     output_dir = job_dir / "output"
     output_dir.mkdir(exist_ok=True)
     
-    background_tasks.add_task(run_extraction_task, job_id, str(pdf_path), str(output_dir))
+    is_ocr = apply_ocr.lower() == 'true'
+    background_tasks.add_task(run_extraction_task, job_id, str(pdf_path), str(output_dir), is_ocr)
         
     return {"job_id": job_id, "message": "Extraction started."}
 
